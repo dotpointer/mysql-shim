@@ -14,7 +14,6 @@ PHP MySQL to MySQLi migration shim library
 	* Sites and projects in the world using the library - Proof that it is in use
 	* Contributors - People that have helped the development
 	* Contact - Where to send mails with error reports, usage information and comments
-	* Source code - Read it directly on this page
 	* Downloads - Links to download the library and the testing script
 
 * Purpose
@@ -201,9 +200,11 @@ PHP MySQL to MySQLi migration shim library
 	* marc17 (GitHub) - Improved mysql_result()
 	* Colin McKinnon - find and sed replacements, improved is_resource_or_mysqli() and auto_prepend suggestions
 	* Yaff Are - Improved error return values
-	* Checkout contributors here at GitHub
+	* Checkout contributors at GitHub, please send me mail if you would like to contribute
 
 * Contact
 
 	You may send me a mail using: dotpointer-at-gmail.com or visit my web page at http://www.dotpointer.com/
 
+* Download
+	The project can be found on GitHub: https://github.com/dotpointer/mysql-shim
