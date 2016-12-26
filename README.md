@@ -185,7 +185,7 @@ PHP MySQL to MySQLi migration shim library
 		
 * License
 
-	Public domain, edit and share without my permission. Contain comments from PHP.net that may rule under different licenses. I do not take any responsibility and I am not liable for any damage caused through use of the code on this site.
+	Public domain, edit and share without my permission. Contain comments from PHP.net that may rule under different licenses. I do not take any responsibility and I am not liable for any damage caused through use of the code.
 
 * Sites and projects in the world using the library
 
