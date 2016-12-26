@@ -157,7 +157,7 @@ PHP MySQL to MySQLi migration shim library
 
 	Note that this script does live tests - it creates databases, tables, table rows, deletes databases and so on. The same words for the library goes for the testing script - it has been developed to be safe to use, but errors may exist. So if you want to be really safe then run the test file on a database server containing data you don't mind losing.
 
-	You are of course welcome to test the library yourself and also to modify both the library and the testing script. Please send me an e-mail if you find anything interesting - like errors. Below are usage instructions and links to the testing script.
+	You are of course welcome to test the library yourself and also to modify both the library and the testing script. Please send me an e-mail if you find anything interesting - like errors. Below are usage instructions for the testing script.
 
 * Usage of the testing script
 
