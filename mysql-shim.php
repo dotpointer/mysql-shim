@@ -2,7 +2,7 @@
 
 # PHP MySQL to MySQLi migration shim library
 #	purpose: Redefines deprecated or missing mysql_ functions and calls mysqli_ functions for PHP5.5+.
-#	website: http://mysql.dotpointer.com/
+#	website: http://www.dotpointer.tk/
 #	author: Robert Klebe, dotpointer, dotpointer at gmail.com
 #	licensing: Public domain, edit and share without permission.
 
@@ -45,6 +45,7 @@
 #	2016-02-25 16:08:51 - cleanup
 #	2016-02-25 18:08:54 - cleanup
 #	2016-12-26 15:07:00 - renaming library from mysql.php to mysql-shim.php
+#	2017-02-01 20:51:00 - domain name edit
 
 # notes
 # 	mysql constants are directly translated to mysqli, so the actual value may differ
