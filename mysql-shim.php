@@ -46,6 +46,7 @@
 #	2016-02-25 18:08:54 - cleanup
 #	2016-12-26 15:07:00 - renaming library from mysql.php to mysql-shim.php
 #	2017-02-01 20:51:00 - domain name edit
+#	2017-02-20 18:56:00 - adding mysql_unbuffered_query, noted missing and requested by Tony Russo
 
 # notes
 # 	mysql constants are directly translated to mysqli, so the actual value may differ
@@ -835,6 +836,14 @@ if (!extension_loaded('mysql')) {
 			return false;
 		}
 		return $temp;
+	}
+
+	# mysql_unbuffered_query - Send an SQL query to MySQL without fetching and buffering the result rows
+	# resource mysql_unbuffered_query ( string $query [, resource $link_identifier = NULL ] )
+	# no mysqli equivalent exists - use mysqli_query with MYSQLI_USE_RESULT parameter
+	function mysql_unbuffered_query ($query, $link_identifier = NULL) {
+		# mysql_unbuffered_query/mysqli_query = FALSE on error
+		return mysqli_query(mysql_ensure_link($link_identifier), $query, MYSQLI_USE_RESULT);
 	}
 }
 ?>
