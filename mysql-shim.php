@@ -47,6 +47,7 @@
 #	2016-12-26 15:07:00 - renaming library from mysql.php to mysql-shim.php
 #	2017-02-01 20:51:00 - domain name edit
 #	2017-02-20 18:56:00 - adding mysql_unbuffered_query, noted missing and requested by Tony Russo
+#	2017-02-20 22:20:08 - bugfixes to mysql_num_rows and mysqli_real_escape_string, cleanup, adding confirmation
 
 # notes
 # 	mysql constants are directly translated to mysqli, so the actual value may differ
@@ -114,9 +115,9 @@ if (!extension_loaded('mysql')) {
 	$mysql_links = array();
 
 	# our own constants to reach default connection values in INI file
-	define('MYSQL_DEFAULT_HOST', ini_get("mysql.default_host"));
-	define('MYSQL_DEFAULT_USER', ini_get("mysql.default_user"));
-	define('MYSQL_DEFAULT_PASSWORD', ini_get("mysql.default_password"));
+	define('MYSQL_DEFAULT_HOST', ini_get('mysql.default_host'));
+	define('MYSQL_DEFAULT_USER', ini_get('mysql.default_user'));
+	define('MYSQL_DEFAULT_PASSWORD', ini_get('mysql.default_password'));
 
 	# --- MySQL constants (from PHP.net) ---------------------------------------------------------------------------------------------------
 
@@ -213,11 +214,11 @@ if (!extension_loaded('mysql')) {
 	function mysql_affected_rows($link_identifier = NULL) {
 		# mysql_affected_rows = -1 if the last query failed
 		# mysqli_affected_rows = -1 indicates that the query returned an error
-		$temp = mysqli_affected_rows(mysql_ensure_link($link_identifier));
-		if ($temp === NULL || $temp === false) {
+		$t = mysqli_affected_rows(mysql_ensure_link($link_identifier));
+		if ($t === NULL || $t === false) {
 			return -1;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_client_encoding - Returns the name of the character set
@@ -226,11 +227,11 @@ if (!extension_loaded('mysql')) {
 	function mysql_client_encoding($link_identifier = NULL) {
 		# note that mysqlI_client_encoding ALSO is deprecated, so we cannot use that
 		# mysql_client_encoding/mysqli_character_set_name = Returns the default character set name for the current connection.
-		$temp = mysqli_character_set_name(mysql_ensure_link($link_identifier));
-		if ($temp === NULL) {
+		$t = mysqli_character_set_name(mysql_ensure_link($link_identifier));
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_close - Close MySQL connection
@@ -271,8 +272,8 @@ if (!extension_loaded('mysql')) {
 	}
 
 	# mysql_connect - Open a connection to a MySQL Server
-	# resource mysql_connect ([ string $server = ini_get("mysql.default_host") [, string $username = ini_get("mysql.default_user") [, string $password = ini_get("mysql.default_password") [, bool $new_link = false [, int $client_flags = 0 ]]]]] )
-	# mysqli mysqli_connect ([ string $host = ini_get("mysqli.default_host") [, string $username = ini_get("mysqli.default_user") [, string $passwd = ini_get("mysqli.default_pw") [, string $dbname = "" [, int $port = ini_get("mysqli.default_port") [, string $socket = ini_get("mysqli.default_socket") ]]]]]] )
+	# resource mysql_connect ([ string $server = ini_get('mysql.default_host') [, string $username = ini_get('mysql.default_user') [, string $password = ini_get('mysql.default_password') [, bool $new_link = false [, int $client_flags = 0 ]]]]] )
+	# mysqli mysqli_connect ([ string $host = ini_get('mysqli.default_host') [, string $username = ini_get('mysqli.default_user') [, string $passwd = ini_get('mysqli.default_pw') [, string $dbname = '' [, int $port = ini_get('mysqli.default_port') [, string $socket = ini_get('mysqli.default_socket') ]]]]]] )
 	function mysql_connect($server = MYSQL_DEFAULT_HOST, $username = MYSQL_DEFAULT_USER, $password = MYSQL_DEFAULT_PASSWORD, $new_link = false, $client_flags = 0) {
 		global $mysql_links;
 
@@ -295,10 +296,10 @@ if (!extension_loaded('mysql')) {
 		}
 
 		# try to connect using current credentials
-		$link = mysqli_connect($server,$username,$password,"");
+		$link = mysqli_connect($server,$username,$password,'');
 
 		if (mysqli_connect_errno()) {
-			# printf("Connect failed: %s\n", mysqli_connect_error());
+			# printf('Connect failed: %s'."\n", mysqli_connect_error());
 			# die();
 			return false;
 		}
@@ -328,8 +329,8 @@ if (!extension_loaded('mysql')) {
 	# bool mysqli_data_seek ( mysqli_result $result , int $offset )
 	function mysql_data_seek($result , $row_number) {
 		# mysql_data_seek/mysqli_data_seek = false on error
-		$temp = mysqli_data_seek($result, $row_number);
-		if ($temp === NULL) {
+		$t = mysqli_data_seek($result, $row_number);
+		if ($t === NULL) {
 			return false;
 		}
 		return true;
@@ -371,11 +372,11 @@ if (!extension_loaded('mysql')) {
 	# int mysqli_errno ( mysqli $link )
 	function mysql_errno($link_identifier = NULL) {
 		# mysql_errno/mysqli_errno = returns a number, 0 if no error
-		$temp = mysqli_errno (mysql_ensure_link($link_identifier));
-		if ($temp === NULL) {
+		$t = mysqli_errno (mysql_ensure_link($link_identifier));
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_error - Returns the text of the error message from previous MySQL operation
@@ -383,11 +384,11 @@ if (!extension_loaded('mysql')) {
 	# string mysqli_error ( mysqli $link )
 	function mysql_error($link_identifier = NULL) {
 		# mysql_error/mysqli_error = returns empty string on no error
-		$temp = mysqli_error(mysql_ensure_link($link_identifier));
-		if ($temp === NULL) {
+		$t = mysqli_error(mysql_ensure_link($link_identifier));
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_escape_string - Escapes a string for use in a # mysql_query
@@ -408,14 +409,14 @@ if (!extension_loaded('mysql')) {
 		# mysqli_fetch_array = Returns an array of strings that corresponds to the fetched row or NULL if there are no more rows in resultset
 
 		# store the result in a temporarily array
-		$temp = mysqli_fetch_array($result, $result_type);
+		$t = mysqli_fetch_array($result, $result_type);
 
 		# is the result null?
-		if ($temp === NULL) {
+		if ($t === NULL) {
 			# then return false as the old function did
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_fetch_assoc - Fetch a result row as an associative array
@@ -424,14 +425,14 @@ if (!extension_loaded('mysql')) {
 	function mysql_fetch_assoc ($result) {
 		# mysql_fetch_assoc = returns FALSE if there are no more rows
 		# mysqli_fetch_assoc = returns NULL if there are no more rows in resultset
-		$temp = mysqli_fetch_assoc($result);
+		$t = mysqli_fetch_assoc($result);
 
 		# is the result null?
-		if ($temp === NULL) {
+		if ($t === NULL) {
 			# then return false as the old function did
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_fetch_field - Get column information from a result and return as an object
@@ -443,12 +444,12 @@ if (!extension_loaded('mysql')) {
 			# then seek to that
 			mysqli_field_seek($result, $field_offset);
 		}
-		$temp = mysqli_fetch_field($result);
+		$t = mysqli_fetch_field($result);
 
-		if ($temp === NULL) {
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_fetch_lengths - Get the length of each output in a result
@@ -456,11 +457,11 @@ if (!extension_loaded('mysql')) {
 	# array mysqli_fetch_lengths ( mysqli_result $result )
 	function mysql_fetch_lengths($result) {
 		# mysql_fetch_lengths/mysqli_fetch_lengths = FALSE on error
-		$temp = mysqli_fetch_lengths($result);
-		if ($temp === NULL) {
+		$t = mysqli_fetch_lengths($result);
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_fetch_object - Fetch a result row as an object
@@ -472,19 +473,19 @@ if (!extension_loaded('mysql')) {
 		# mysqli_fetch_object = NULL if there are no more rows in resultset
 
 		if ($class_name !== NULL && $params !== NULL) {
-			$temp = mysqli_fetch_object($result, $class_name, $params);
+			$t = mysqli_fetch_object($result, $class_name, $params);
 		} else if ($class_name !== NULL) {
-			$temp = mysqli_fetch_object($result, $class_name);
+			$t = mysqli_fetch_object($result, $class_name);
 		} else {
-			$temp = mysqli_fetch_object($result);
+			$t = mysqli_fetch_object($result);
 		}
 
 		# is the result null?
-		if ($temp === NULL) {
+		if ($t === NULL) {
 			# then return false as the old function did
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_fetch_row - Get a result row as an enumerated array
@@ -495,14 +496,14 @@ if (!extension_loaded('mysql')) {
 		# mysql_fetch_row = FALSE if there are no more rows
 		# mysqli_fetch_row = NULL if there are no more rows in result set
 
-		$temp = mysqli_fetch_row($result);
+		$t = mysqli_fetch_row($result);
 
 		# is the result null?
-		if ($temp === NULL) {
+		if ($t === NULL) {
 			# then return false as the old function did
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_field_flags - Get the flags associated with the specified field in a result
@@ -512,10 +513,10 @@ if (!extension_loaded('mysql')) {
 	function mysql_field_flags($result, $field_offset) {
 		# mysql_field_flags = FALSE on failure
 		# mysqli_fetch_field_direct = FALSE if no field information for specified fieldnr is available
-		$tmp = mysqli_fetch_field_direct($result, $field_offset);
-		if (!is_object($tmp)) return false;
-		$tmp = (array)$tmp;
-		return isset($tmp['flags']) ? mysql_field_bitflags_to_flags($tmp['flags']) : false;
+		$t = mysqli_fetch_field_direct($result, $field_offset);
+		if (!is_object($t)) return false;
+		$t = (array)$t;
+		return isset($t['flags']) ? mysql_field_bitflags_to_flags($t['flags']) : false;
 	}
 
 	# mysql_field_len - Returns the length of the specified field
@@ -525,10 +526,10 @@ if (!extension_loaded('mysql')) {
 	function mysql_field_len($result, $field_offset) {
 		# mysql_field_len = FALSE on failure
 		# mysqli_fetch_field_direct = FALSE if no field information for specified fieldnr is available
-		$tmp = mysqli_fetch_field_direct($result, $field_offset);
-		if (!is_object($tmp)) return false;
-		$tmp = (array)$tmp;
-		return isset($tmp['length']) ? $tmp['length'] : false;
+		$t = mysqli_fetch_field_direct($result, $field_offset);
+		if (!is_object($t)) return false;
+		$t = (array)$t;
+		return isset($t['length']) ? $t['length'] : false;
 	}
 
 	# mysql_field_name - Get the name of the specified field in a result
@@ -538,10 +539,10 @@ if (!extension_loaded('mysql')) {
 	function mysql_field_name($result, $field_offset) {
 		# mysql_field_name = FALSE on failure
 		# mysqli_fetch_field_direct = FALSE if no field information for specified fieldnr is available
-		$tmp = mysqli_fetch_field_direct($result, $field_offset);
-		if (!is_object($tmp)) return false;
-		$tmp = (array)$tmp;
-		return isset($tmp['name']) ? $tmp['name'] : false;
+		$t = mysqli_fetch_field_direct($result, $field_offset);
+		if (!is_object($t)) return false;
+		$t = (array)$t;
+		return isset($t['name']) ? $t['name'] : false;
 	}
 
 	# mysql_field_seek - Set result pointer to a specified field offset
@@ -549,11 +550,11 @@ if (!extension_loaded('mysql')) {
 	# bool mysqli_field_seek ( mysqli_result $result , int $fieldnr )
 	function mysql_field_seek($result, $field_offset) {
 		# mysql_field_seek/mysqli_field_seek = FALSE on failure
-		$temp = mysqli_field_seek($result, $field_offset);
-		if ($temp === NULL) {
+		$t = mysqli_field_seek($result, $field_offset);
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_field_table - Get name of the table the specified field is in
@@ -563,10 +564,10 @@ if (!extension_loaded('mysql')) {
 	function mysql_field_table($result, $field_offset) {
 		# mysql_field_table = error return value not defined
 		# mysqli_fetch_field_direct = FALSE if no field information for specified fieldnr is available
-		$tmp = mysqli_fetch_field_direct($result, $field_offset);
-		if (!is_object($tmp)) return false;
-		$tmp = (array)$tmp;
-		return isset($tmp['table']) ? $tmp['table'] : false;
+		$t = mysqli_fetch_field_direct($result, $field_offset);
+		if (!is_object($t)) return false;
+		$t = (array)$t;
+		return isset($t['table']) ? $t['table'] : false;
 	}
 
 	# mysql_field_type - Get the type of the specified field in a result
@@ -576,10 +577,10 @@ if (!extension_loaded('mysql')) {
 	function mysql_field_type($result, $field_offset) {
 		# mysql_field_type = error return value not defined
 		# mysqli_fetch_field_direct = FALSE if no field information for specified fieldnr is available
-		$tmp = mysqli_fetch_field_direct($result, $field_offset);
-		if (!is_object($tmp)) return false;
-		$tmp = (array)$tmp;
-		return isset($tmp['type']) ? mysql_field_bittypes_to_types($tmp['type']) : false;
+		$t = mysqli_fetch_field_direct($result, $field_offset);
+		if (!is_object($t)) return false;
+		$t = (array)$t;
+		return isset($t['type']) ? mysql_field_bittypes_to_types($t['type']) : false;
 	}
 
 	# mysql_free_result - Free result memory
@@ -608,11 +609,11 @@ if (!extension_loaded('mysql')) {
 	function mysql_get_host_info ($link_identifier = NULL) {
 		# mysql_get_host_info = FALSE on failure
 		# mysqli_get_host_info = error return value not defined
-		$temp = mysqli_get_host_info(mysql_ensure_link($link_identifier));
-		if ($temp === NULL) {
+		$t = mysqli_get_host_info(mysql_ensure_link($link_identifier));
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_get_proto_info - Get MySQL protocol info
@@ -621,11 +622,11 @@ if (!extension_loaded('mysql')) {
 	function mysql_get_proto_info($link_identifier = NULL) {
 		# mysql_get_proto_info = FALSE on failure
 		# mysqli_get_proto_info = error return value not defined
-		$temp = mysqli_get_proto_info(mysql_ensure_link($link_identifier));
-		if ($temp === NULL) {
+		$t = mysqli_get_proto_info(mysql_ensure_link($link_identifier));
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_get_server_info - Get MySQL server info
@@ -634,11 +635,11 @@ if (!extension_loaded('mysql')) {
 	function mysql_get_server_info($link_identifier = NULL) {
 		# mysql_get_server_info = FALSE on failure
 		# mysqli_get_server_info = error return value not defined
-		$temp = mysqli_get_server_info(mysql_ensure_link($link_identifier));
-		if ($temp === NULL) {
+		$t = mysqli_get_server_info(mysql_ensure_link($link_identifier));
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_info - Get information about the most recent query
@@ -647,11 +648,11 @@ if (!extension_loaded('mysql')) {
 	function mysql_info($link_identifier = NULL) {
 		# mysql_info = FALSE on failure
 		# mysqli_info = returns empty string on failure
-		$temp = mysqli_info(mysql_ensure_link($link_identifier));
-		if ($temp === NULL) {
+		$t = mysqli_info(mysql_ensure_link($link_identifier));
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_insert_id - Get the ID generated in the last query
@@ -660,11 +661,11 @@ if (!extension_loaded('mysql')) {
 	function mysql_insert_id($link_identifier = NULL) {
 		# mysql_insert_id = FALSE if no MySQL connection was established
 		# mysqli_insert_id = error value not defined
-		$temp = mysqli_insert_id(mysql_ensure_link($link_identifier));
-		if ($temp === null) {
+		$t = mysqli_insert_id(mysql_ensure_link($link_identifier));
+		if ($t === null) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_list_dbs - List databases available on a MySQL server
@@ -674,16 +675,16 @@ if (!extension_loaded('mysql')) {
 		global $mysql_list_dbs_cache;
 
 		# mysql_list_dbs/mysql_query = FALSE on failure
-		$temp = mysql_query('SHOW DATABASES', mysql_ensure_link($link_identifier));
+		$t = mysql_query('SHOW DATABASES', mysql_ensure_link($link_identifier));
 
-		$mysql_list_dbs_cache = $temp;
+		$mysql_list_dbs_cache = $t;
 
 		# when no working link is passed we get null
-		if ($temp === NULL) {
+		if ($t === NULL) {
 			return false;
 		}
 
-		return $temp;
+		return $t;
 	}
 
 	# mysql_list_fields - List MySQL table fields
@@ -699,11 +700,11 @@ if (!extension_loaded('mysql')) {
 	# mysqli_thread_id()
 	function mysql_list_processes($link_identifier = NULL) {
 		# mysql_list_processes = FALSE on failure
-		$temp = mysql_query("SHOW PROCESSLIST", mysql_ensure_link($link_identifier));
-		if ($temp === null) {
+		$t = mysql_query('SHOW PROCESSLIST', mysql_ensure_link($link_identifier));
+		if ($t === null) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_list_tables - List tables in a MySQL database
@@ -723,11 +724,11 @@ if (!extension_loaded('mysql')) {
 
 		# mysql takes a result, where mysqli takes link and takes the most recent query
 		# so instead we fetch all the fields and then count that
-		$tmp = mysqli_fetch_fields($result);
-		if ($tmp === null) {
+		$t = mysqli_fetch_fields($result);
+		if ($t === null) {
 			return false;
 		}
-		return count($tmp);
+		return count($t);
 	}
 
 	# mysql_num_rows - Get number of rows in result
@@ -735,8 +736,12 @@ if (!extension_loaded('mysql')) {
 	# int mysqli_num_rows ( mysqli_result $result )
 	function mysql_num_rows($result) {
 		# mysql_num_rows = FALSE on failure
-		# mysqli_num_rows = error return value not defined
-		return mysqli_num_rows($result);
+		# mysqli_num_rows = NULL on failure
+		$t = mysqli_num_rows($result);
+		if ($t === null) {
+			return false;
+		}
+		return $t;
 	}
 
 	# mysql_pconnect - Open a persistent connection to a MySQL server
@@ -752,11 +757,11 @@ if (!extension_loaded('mysql')) {
 	# bool mysqli_ping ( mysqli $link )
 	function mysql_ping($link_identifier = NULL) {
 		# mysql_ping/mysqli_ping = FALSE on error
-		$temp = mysqli_ping(mysql_ensure_link($link_identifier));
-		if ($temp === NULL) {
+		$t = mysqli_ping(mysql_ensure_link($link_identifier));
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_query - Send a MySQL query
@@ -773,7 +778,11 @@ if (!extension_loaded('mysql')) {
 	function mysql_real_escape_string($unescaped_string, $link_identifier = NULL) {
 		# mysql_real_escape_string = FALSE on error
 		# mysqli_real_escape_string = error return value not defined
-		return mysqli_real_escape_string(mysql_ensure_link($link_identifier), $unescaped_string);
+		$t = mysqli_real_escape_string(mysql_ensure_link($link_identifier), $unescaped_string);
+		if ($t === NULL) {
+			return false;
+		}
+		return $t;
 	}
 
 	# mysql_result - Get result data
@@ -810,11 +819,11 @@ if (!extension_loaded('mysql')) {
 	function mysql_stat($link_identifier = NULL) {
 		# mysql_stat = NULL on error
 		# mysqli_stat = FALSE on error
-		$temp = mysqli_stat(mysql_ensure_link($link_identifier));
-		if ($temp === FALSE) {
+		$t = mysqli_stat(mysql_ensure_link($link_identifier));
+		if ($t === FALSE) {
 			return NULL;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_tablename - Get table name of field
@@ -831,11 +840,11 @@ if (!extension_loaded('mysql')) {
 	function mysql_thread_id($link_identifier = NULL) {
 		# mysql_thread_id = FALSE on failure
 		# mysqli_thread_id = no error return value defined
-		$temp = mysqli_thread_id(mysql_ensure_link($link_identifier));
-		if ($temp === NULL) {
+		$t = mysqli_thread_id(mysql_ensure_link($link_identifier));
+		if ($t === NULL) {
 			return false;
 		}
-		return $temp;
+		return $t;
 	}
 
 	# mysql_unbuffered_query - Send an SQL query to MySQL without fetching and buffering the result rows
