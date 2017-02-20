@@ -198,8 +198,9 @@ PHP MySQL to MySQLi migration shim library
 
 	* Robert Klebe, dotpointer - Author of initial version and maintainer
 	* marc17 (GitHub) - Improved mysql_result()
-	* Colin McKinnon - find and sed replacements, improved is_resource_or_mysqli() and auto_prepend suggestions
+	* Colin McKinnon - Find and sed replacements, improved is_resource_or_mysqli() and auto_prepend suggestions
 	* Yaff Are - Improved error return values
+	* Tony Russo - Noted mysql_unbuffered_query() missing and reported bug in testing script
 	* Checkout contributors at GitHub, please send me mail if you would like to contribute
 
 * Contact
