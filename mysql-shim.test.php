@@ -12,8 +12,20 @@
 # include the file to test
 require_once('mysql-shim.php');
 
+function print_help() {
+
+	echo 'The following parameters can be specified: '."\n";
+	echo '	-h <hostname> (optional, defaults to localhost)'."\n";
+	echo '	-u <username> (optional, defaults to root)'."\n";
+	echo '	-p <password> (optional, defaults to an empty string)'."\n";
+	echo '	-d <database> (optional, defaults to testdatabase12345, to be created and deleted)'."\n";
+	echo '	-? or --help show this help'."\n";
+	die();
+
+}
+
 # get parameters
-$opt = getopt('h:u:p:d:?');
+$opt = getopt('h:u:p:d:?', array('help'));
 
 # get parameters
 $database 	= isset($opt['d']) && strlen($opt['d']) ? $opt['d'] : 'testdatabase12345';;
@@ -21,14 +33,9 @@ $host 		= isset($opt['h']) && strlen($opt['h']) ? $opt['h'] : 'localhost';
 $password 	= isset($opt['p']) ? $opt['p'] : '';
 $username 	= isset($opt['u']) && strlen($opt['u']) ? $opt['u'] : 'root';
 
-if (isset($opt['?'])) {
-	echo 'The following parameters can be specified: '."\n";
-	echo '	-h <hostname> (optional, defaults to localhost)'."\n";
-	echo '	-u <username> (optional, defaults to root)'."\n";
-	echo '	-p <password> (optional, defaults to an empty string)'."\n";
-	echo '	-d <database> (optional, defaults to testdatabase12345, to be created and deleted)'."\n";
-	echo '	-? show this help'."\n";
-	die();
+if (isset($opt['?']) || isset($opt['help'])) {
+	print_help();
+	die(0);
 }
 
 # print intro
@@ -43,7 +50,11 @@ echo 'Database: '.$database."\n";
 # preparations - connect to default host and make a default database
 echo 'Connecting to database server and pre-selecting db...'."\n";
 $link = @mysql_connect($host, $username, $password);
-if (!$link) die('Failed to connect to host: '.$host.', error: '.mysql_error()."\n");
+if (!$link) {
+	echo 'Failed to connect to host: '.$host.'.'."\n";
+	print_help();
+	die(1);
+}
 
 # preps - do a db
 @mysql_create_db($database, $link);
