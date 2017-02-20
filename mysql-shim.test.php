@@ -6,6 +6,7 @@
 	# 2016-02-24 15:27:05 - first version
 	# 2016-12-26 15:08:00 - renaming file from mysql.test.php to mysql-shim.test.php
 	# 2017-02-20 18:06:00 - bugfix, renaming inclusion of library file
+	# 2017-02-20 20:10:00 - bugfix, invalid connection credentials resulted in error, printing help on connect error, thanks to Tony Russo for finding it
 
 	$time_start = microtime(true);
 
