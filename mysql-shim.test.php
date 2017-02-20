@@ -5,11 +5,12 @@
 	# changelog
 	# 2016-02-24 15:27:05 - first version
 	# 2016-12-26 15:08:00 - renaming file from mysql.test.php to mysql-shim.test.php
+	# 2017-02-20 18:06:00 - bugfix, renaming inclusion of library file
 
 	$time_start = microtime(true);
 
 # include the file to test
-require_once('mysql.php');
+require_once('mysql-shim.php');
 
 # get parameters
 $opt = getopt('h:u:p:d:?');
