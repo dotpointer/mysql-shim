@@ -521,9 +521,9 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 # --- mysql_field_flags
 
 # preparations
-$temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
-$temp = db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
-$temp = db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testing")');
+db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
+db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
+db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testing")');
 $temp = db_query($link, __LINE__, 'SELECT * FROM testtable');
 
 # true
@@ -546,8 +546,8 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 # --- mysql_field_len
 
 # run query
-$temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
-$temp = db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
+db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
+db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
 $temp = db_query($link, __LINE__, 'SELECT * FROM testtable');
 # true
 echo 'Testing mysql_field_len return value...';
@@ -571,8 +571,8 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 # --- mysql_field_name
 
 # run query
-$temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
-$temp = db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
+db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
+db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
 $temp = db_query($link, __LINE__, 'SELECT * FROM testtable');
 # true
 echo 'Testing mysql_field_name return value...';
@@ -594,8 +594,8 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 # --- mysql_field_seek
 
 # run query
-$temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
-$temp = db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
+db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
+db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
 $temp = db_query($link, __LINE__, 'SELECT * FROM testtable');
 # true
 echo 'Testing mysql_field_seek return value...';
@@ -617,8 +617,8 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 # --- mysql_field_table
 
 # run query
-$temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
-$temp = db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
+db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
+db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
 $temp = db_query($link, __LINE__, 'SELECT * FROM testtable');
 # true
 echo 'Testing mysql_field_table return value...';
@@ -638,8 +638,8 @@ if ($r !== false) {
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
 # run query
-$temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
-$temp = db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
+db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
+db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
 $temp = db_query($link, __LINE__, 'SELECT * FROM testtable');
 # true
 echo 'Testing mysql_field_type return value...';
@@ -661,8 +661,8 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 # --- mysql_free_result
 
 # run query
-$temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
-$temp = db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
+db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
+db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
 $temp = db_query($link, __LINE__, 'SELECT * FROM testtable');
 # true
 echo 'Testing mysql_free_result return value...';
@@ -751,8 +751,8 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 # --- mysql_info
 
 # run query
-$temp = db_query($link, __LINE__, 'DROP TABLE testtable');
-$temp = db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT)');
+db_query($link, __LINE__, 'DROP TABLE testtable');
+db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT)');
 $temp = db_query($link, __LINE__, 'ALTER TABLE testtable ADD COLUMN testcolumn INT NOT NULL');
 
 # true
@@ -772,9 +772,9 @@ if ($r !== false) {
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
 # reset testing table
-$temp = db_query($link, __LINE__, 'DROP TABLE testtable');
-$temp = db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
-$temp = db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testing")');
+db_query($link, __LINE__, 'DROP TABLE testtable');
+db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
+db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testing")');
 
 # --- mysql_insert_id
 
