@@ -89,29 +89,24 @@ echo 'Host: '.$host."\n";
 echo 'Username: '.$username."\n";
 echo 'Password: '.str_repeat('*', strlen($password))."\n";
 echo 'Database: '.$database."\n";
-echo 'Using extension: ';
 
 # is mysql extension loaded
 if (extension_loaded('mysql')) {
-	echo 'mysql'."\n";
-	echo 'Cannot continue if this extension is loaded.'."\n";
+	echo 'Fatal error: MySQL extension is loaded, no point of running the test then.'."\n";
 	die(1);
-# or is mysqli extension loaded
-} else if (extension_loaded('mysqli')) {
-	echo 'mysqli'."\n";
-# or no extensions are loaded at all
-} else {
-	echo 'none'."\n";
-	echo 'Fatal error: Neither MySQL nor MySQLi extensions are loaded.'."\n";
+}
+
+# or is mysqli extension not loaded
+if (!extension_loaded('mysqli')) {
+	echo 'Fatal error: MySQLi extension is not loaded, need that to run.'."\n";
 	die(1);
 }
 
 # confirm user wants to continue, if not override is specified
 if (!$confirmed) {
+	# make sure user wants to do this
 	echo "\n".'WARNING! The database will be used for testing - created, edited, deleted.'."\n";
 	echo 'Data stored in the database WILL be lost.'."\n\n";
-
-	# make sure user wants to do this
 	echo 'Are you sure you want to do this?  Type "y" to continue: ';
 	$handle = fopen ("php://stdin","r");
 	$line = fgets($handle);
@@ -151,7 +146,7 @@ db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
 db_query($link, __LINE__, 'CREATE TABLE testtable (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
 db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testing")');
 
-# --- mysql_affected_rows ---
+# --- mysql_affected_rows
 
 # integer <> -1
 echo 'Testing mysql_affected_rows return value...';
@@ -169,7 +164,7 @@ if (!is_numeric($r) || $r !== -1) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_client_encoding ----------------------------------------
+# --- mysql_client_encoding
 
 # string
 echo 'Testing mysql_client_encoding return value...';
@@ -187,7 +182,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_close ----------------------------------------
+# --- mysql_close
 
 # true
 echo 'Testing mysql_close return value...';
@@ -205,7 +200,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_connect ----------------------------------------
+# --- mysql_connect
 
 # false
 echo 'Testing mysql_connect error return value...';
@@ -225,7 +220,7 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 
 $link = $r;
 
-# --- mysql_create_db ----------------------------------------
+# --- mysql_create_db
 db_query($link, __LINE__, 'DROP DATABASE '.mysqli_real_escape_string($link, $database));
 
 # true
@@ -253,9 +248,11 @@ db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
 db_query($link, __LINE__, 'CREATE TABLE testtable (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
 db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testing")');
 
-# --- mysql_data_seek ----------------------------------------
+# --- mysql_data_seek
 
-if (!$r = mysql_query('SELECT * FROM testtable', $link)) {
+$sql = 'SELECT * FROM testtable';
+$sqllog[] = $sql;
+if (!$r = mysql_query($sql, $link)) {
 	echo 'Failed doing preparations.'.__LINE__.': '.mysql_error()."\n";
 	die(1);
 }
@@ -276,11 +273,9 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_db_name ----------------------------------------
+# --- mysql_db_name
 
-if (!$r = mysql_query('SELECT * FROM testtable', $link)) {
-	echo 'Failed doing preparations.'.__LINE__.': '.mysql_error()."\n";
-}
+$r = db_query($link, __LINE__, 'SELECT * FROM testtable');
 
 # a string
 echo 'Testing mysql_db_name return value...';
@@ -290,9 +285,7 @@ if (!is_string($r)) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-if (!$r = mysql_query('SELECT * FROM testtable', $link)) {
-	echo 'Failed doing preparations.'.__LINE__.': '.mysql_error()."\n";
-}
+$r = db_query($link, __LINE__, 'SELECT * FROM testtable', $link);
 
 # false
 echo 'Testing mysql_db_name error return value...';
@@ -302,11 +295,13 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_db_query ----------------------------------------
+# --- mysql_db_query
 
 # true
 echo 'Testing mysql_db_query return value...';
-$r = mysql_db_query($database, 'SELECT * FROM testtable', $link);
+$sql = 'SELECT * FROM testtable';
+$sqllog[] = $sql;
+$r = mysql_db_query($database, $sql, $link);
 if (!is_resource($r) && !is_object($r)) {
 	error(__LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 }
@@ -320,7 +315,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_drop_db ----------------------------------------
+# --- mysql_drop_db
 
 # true
 echo 'Testing mysql_drop_db return value...';
@@ -349,7 +344,7 @@ if (!mysqli_select_db($link, $database)) {
 db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
 db_query($link, __LINE__, 'CREATE TABLE testtable (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
 
-# --- mysql_errno ----------------------------------------
+# --- mysql_errno
 
 # string
 echo 'Testing mysql_errno return value...';
@@ -367,7 +362,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_error ----------------------------------------
+# --- mysql_error
 
 # string
 echo 'Testing mysql_error return value...';
@@ -385,7 +380,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_escape_string ----------------------------------------
+# --- mysql_escape_string
 
 # string
 echo 'Testing mysql_escape_string return value...';
@@ -395,7 +390,7 @@ if (!is_string($r)) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_fetch_array ----------------------------------------
+# --- mysql_fetch_array
 
 # run query
 $temp = db_query($link, __LINE__, 'SHOW DATABASES');
@@ -416,7 +411,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_fetch_assoc ----------------------------------------
+# --- mysql_fetch_assoc
 
 # run query
 $temp = db_query($link, __LINE__, 'SHOW DATABASES');
@@ -437,7 +432,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_fetch_field ----------------------------------------
+# --- mysql_fetch_field
 
 # run query
 $temp = db_query($link, __LINE__, 'SHOW DATABASES');
@@ -458,7 +453,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_fetch_lengths ----------------------------------------
+# --- mysql_fetch_lengths
 
 # run query
 $temp = db_query($link, __LINE__, 'SHOW DATABASES');
@@ -481,7 +476,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_fetch_object ---
+# --- mysql_fetch_object
 
 # run query
 $temp = db_query($link, __LINE__, 'SHOW DATABASES');
@@ -502,7 +497,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_fetch_row ---
+# --- mysql_fetch_row
 
 # run query
 $temp = db_query($link, __LINE__, 'SHOW DATABASES');
@@ -523,7 +518,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_field_flags ---
+# --- mysql_field_flags
 
 # preparations
 $temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
@@ -548,7 +543,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_field_len ---
+# --- mysql_field_len
 
 # run query
 $temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
@@ -573,7 +568,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_field_name ---
+# --- mysql_field_name
 
 # run query
 $temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
@@ -596,7 +591,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_field_seek ---
+# --- mysql_field_seek
 
 # run query
 $temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
@@ -619,7 +614,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_field_table ---
+# --- mysql_field_table
 
 # run query
 $temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
@@ -663,7 +658,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_free_result ---
+# --- mysql_free_result
 
 # run query
 $temp = db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
@@ -688,7 +683,7 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 # }
 # echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_get_client_info ---
+# --- mysql_get_client_info
 
 # string
 echo 'Testing mysql_get_client_info return value...';
@@ -699,7 +694,7 @@ if (!is_string($r)) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_get_host_info ----------------------------------------
+# --- mysql_get_host_info
 
 # true
 echo 'Testing mysql_get_host_info return value...';
@@ -717,7 +712,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_get_proto_info ----------------------------------------
+# --- mysql_get_proto_info
 
 # true
 echo 'Testing mysql_get_proto_info return value...';
@@ -735,7 +730,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_get_server_info ----------------------------------------
+# --- mysql_get_server_info
 
 # true
 echo 'Testing mysql_get_server_info return value...';
@@ -753,7 +748,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_info ----------------------------------------
+# --- mysql_info
 
 # run query
 $temp = db_query($link, __LINE__, 'DROP TABLE testtable');
@@ -781,7 +776,7 @@ $temp = db_query($link, __LINE__, 'DROP TABLE testtable');
 $temp = db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
 $temp = db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testing")');
 
-# --- mysql_insert_id ---
+# --- mysql_insert_id
 
 # true
 echo 'Testing mysql_insert_id return value...';
@@ -799,7 +794,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_list_dbs ----------------------------------------
+# --- mysql_list_dbs
 
 # false
 echo 'Testing mysql_list_dbs error return value...';
@@ -817,7 +812,7 @@ if (!is_resource($r) && !is_object($r)) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_list_fields ---
+# --- mysql_list_fields
 
 # a resource
 echo 'Testing mysql_list_fields return value...';
@@ -835,7 +830,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_list_processes ---
+# --- mysql_list_processes
 
 # a resource
 echo 'Testing mysql_list_processes return value...';
@@ -854,7 +849,7 @@ if ($r !== false) {
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
 
-# --- mysql_list_tables ----------------------------------------
+# --- mysql_list_tables
 
 # false
 echo 'Testing mysql_list_tables error return value...';
@@ -872,7 +867,7 @@ if (!is_resource($r) && !is_object($r)) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_num_fields ---
+# --- mysql_num_fields
 
 $r = db_query($link, __LINE__, 'SELECT * FROM testtable');
 
@@ -892,7 +887,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_num_rows ---
+# --- mysql_num_rows
 
 $r = db_query($link, __LINE__, 'SELECT * FROM testtable');
 
@@ -912,7 +907,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_pconnect ----------------------------------------
+# --- mysql_pconnect
 
 # false
 echo 'Testing mysql_pconnect error return value...';
@@ -938,7 +933,7 @@ if (!@mysql_select_db($database, $link)) {
 	die(1);
 }
 
-# --- mysql_ping ----------------------------------------
+# --- mysql_ping
 
 # true
 echo 'Testing mysql_ping return value...';
@@ -956,11 +951,13 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_query ---
+# --- mysql_query
 
 # a mysqli object
 echo 'Testing mysql_query return value type I: object...';
-$r = mysql_query('SELECT * FROM testtable');
+$sql = 'SELECT * FROM testtable';
+$sqllog[] = $sql;
+$r = mysql_query($sql);
 if (!is_object($r)) {
 	error(__LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 }
@@ -968,7 +965,9 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 
 # a boolean
 echo 'Testing mysql_query return value type II: boolean...';
-$r = mysql_query('INSERT INTO testtable (testcolumn) VALUES("testing")');
+$sql = 'INSERT INTO testtable (testcolumn) VALUES("testing")';
+$sqllog[] = $sql;
+$r = mysql_query($sql);
 if ($r !== true) {
 	error(__LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 }
@@ -982,7 +981,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_real_escape_string ---
+# --- mysql_real_escape_string
 
 # true
 echo 'Testing mysql_real_escape_string return value...';
@@ -1000,7 +999,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_result ---
+# --- mysql_result
 
 $r = db_query($link, __LINE__, 'SELECT * FROM testtable');
 
@@ -1020,7 +1019,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_select_db ----------------------------------------
+# --- mysql_select_db
 
 # false
 echo 'Testing mysql_select_db error return value...';
@@ -1039,7 +1038,7 @@ if ($r !== true) {
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
 
-# --- mysql_set_charset ---
+# --- mysql_set_charset
 # true
 echo 'Testing mysql_set_charset return value...';
 $r = mysql_set_charset('utf8', $link);
@@ -1056,7 +1055,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_stat ---
+# --- mysql_stat
 
 # true
 echo 'Testing mysql_stat return value...';
@@ -1074,7 +1073,7 @@ if ($r !== null) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_tablename ---
+# --- mysql_tablename
 
 # string
 echo 'Testing mysql_tablename return value...';
@@ -1092,7 +1091,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_thread_id ---
+# --- mysql_thread_id
 
 # true
 echo 'Testing mysql_thread_id return value...';
@@ -1110,7 +1109,7 @@ if ($r !== false) {
 }
 echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
 
-# --- mysql_unbuffered_query ---
+# --- mysql_unbuffered_query
 
 # a mysqli object
 echo 'Testing mysql_unbuffered_query return value type I: object...';
