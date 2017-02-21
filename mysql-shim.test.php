@@ -149,7 +149,7 @@ if (!mysqli_select_db($link, $database)) {
 # preparations - do a table
 db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
 db_query($link, __LINE__, 'CREATE TABLE testtable (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
-db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testar")');
+db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testing")');
 
 # --- mysql_affected_rows ---
 
@@ -251,7 +251,7 @@ if (!mysqli_select_db($link, $database)) {
 # preparations - do a table
 db_query($link, __LINE__, 'DROP TABLE IF EXISTS testtable');
 db_query($link, __LINE__, 'CREATE TABLE testtable (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
-db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testar")');
+db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testing")');
 
 # --- mysql_data_seek ----------------------------------------
 
@@ -779,7 +779,7 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 # reset testing table
 $temp = db_query($link, __LINE__, 'DROP TABLE testtable');
 $temp = db_query($link, __LINE__, 'CREATE TABLE testtable(id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, testcolumn TINYTEXT NOT NULL)');
-$temp = db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testar")');
+$temp = db_query($link, __LINE__, 'INSERT INTO testtable (testcolumn) VALUES("testing")');
 
 # --- mysql_insert_id ---
 
@@ -968,7 +968,7 @@ echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true
 
 # a boolean
 echo 'Testing mysql_query return value type II: boolean...';
-$r = mysql_query('INSERT INTO testtable (testcolumn) VALUES("testar")');
+$r = mysql_query('INSERT INTO testtable (testcolumn) VALUES("testing")');
 if ($r !== true) {
 	error(__LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 }
@@ -1123,7 +1123,7 @@ mysqli_free_result ($r);
 
 # a boolean
 echo 'Testing mysql_unbuffered_query return value type II: boolean...';
-$r = mysql_unbuffered_query('INSERT INTO testtable (testcolumn) VALUES("testar")');
+$r = mysql_unbuffered_query('INSERT INTO testtable (testcolumn) VALUES("testing")');
 if ($r !== true) {
 	error(__LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 }
