@@ -172,21 +172,21 @@ PHP MySQL to MySQLi migration shim library
 
 	If it works it runs through all the functions and does live tests.
 
-	* Parameters for the testing script
+* Parameters for the testing script
 
 	You may pass the following parameters to the testing script:
 
-	-d <database> (optional, defaults to testdatabase12345, to be created and deleted)
+	-d database (optional, defaults to testdatabase12345, to be created and deleted)
 
 	-f to drop database if it exists
 
-	-h <hostname> (optional, defaults to localhost)
+	-h hostname (optional, defaults to localhost)
 
 	-H or --help show this help
 
-	-p <password> (optional, defaults to an empty string)
+	-p password (optional, defaults to an empty string)
 
-	-u <username> (optional, defaults to root)
+	-u username (optional, defaults to root)
 
 	-y to continue without confirmation
 
