@@ -31,7 +31,7 @@ $opt = getopt('yh:u:p:d:?', array('help'));
 # get parameters
 $confirmed	= isset($opt['y']);
 $database 	= isset($opt['d']) && strlen($opt['d']) ? $opt['d'] : 'testdatabase12345';;
-$help		= isset($opt['h']) || isset($opt['help']);
+$help		= isset($opt['?']) || isset($opt['help']);
 $host 		= isset($opt['h']) && strlen($opt['h']) ? $opt['h'] : 'localhost';
 $password	= isset($opt['p']) ? $opt['p'] : '';
 $username	= isset($opt['u']) && strlen($opt['u']) ? $opt['u'] : 'root';
