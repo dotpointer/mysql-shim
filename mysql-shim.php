@@ -48,6 +48,7 @@
 #	2017-02-01 20:51:00 - domain name edit
 #	2017-02-20 18:56:00 - adding mysql_unbuffered_query, noted missing and requested by Tony Russo
 #	2017-02-20 22:20:08 - bugfixes to mysql_num_rows and mysqli_real_escape_string, cleanup, adding confirmation
+#	2017-02-22 00:51:18 - Adding mysql_createdb(), editing error return values of several functions according to native PHP 5.6.3 error return values
 
 # notes
 # 	mysql constants are directly translated to mysqli, so the actual value may differ

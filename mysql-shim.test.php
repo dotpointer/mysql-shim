@@ -4,11 +4,19 @@
 
 	# changelog
 	# 2016-02-24 15:27:05 - first version
-	# 2016-12-26 15:08:00 - renaming file from mysql.test.php to mysql-shim.test.php
+	# 2016-12-26 15:08:00 - renaming file from mysql.test.php to
+	#	mysql-shim.test.php
 	# 2017-02-20 18:06:00 - bugfix, renaming inclusion of library file
-	# 2017-02-20 20:10:00 - bugfix, invalid connection credentials resulted in error, printing help on connect error, thanks to Tony Russo for finding it
-	# 2017-02-20 22:19:21 - adding tests for mysql_query, mysql_unbuffered_query, mysql_num_rows, mysql_pconnect etc.
+	# 2017-02-20 20:10:00 - bugfix, invalid connection credentials
+	#	resulted in error, printing help on connect error, thanks to Tony Russo
+	#	for finding it
+	# 2017-02-20 22:19:21 - adding tests for mysql_query,
+	#	mysql_unbuffered_query, mysql_num_rows, mysql_pconnect etc.
 	# 2017-02-21 18:56:20 - rewriting error handling
+	# 2017-02-22 00:52:08 - Making it possible to test native PHP functions by
+	#	request from Tony Russo and to exclude the shim from the test. Adding
+	#	checks for function existence in test and correcting return value
+	#	validations to native PHP 5.6.3 function return values.
 
 $time_start = microtime(true);
 $sqllog = array();
