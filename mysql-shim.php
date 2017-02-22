@@ -48,7 +48,8 @@
 #	2017-02-01 20:51:00 - domain name edit
 #	2017-02-20 18:56:00 - adding mysql_unbuffered_query, noted missing and requested by Tony Russo
 #	2017-02-20 22:20:08 - bugfixes to mysql_num_rows and mysqli_real_escape_string, cleanup, adding confirmation
-#	2017-02-22 00:51:18 - Adding mysql_createdb(), editing error return values of several functions according to native PHP 5.6.3 error return values
+#	2017-02-22 00:51:18 - adding mysql_createdb(), editing error return values of several functions according to native PHP 5.6.3 error return values
+#	2017-02-22 20:27:02 - adding mysql_dbname()
 
 # notes
 # 	mysql constants are directly translated to mysqli, so the actual value may differ
@@ -338,11 +339,14 @@ if (!extension_loaded('mysql')) {
 	# SELECT DATABASE()
 	function mysql_db_name($result , $row, $field = NULL) {
 		# return mysql_query('SELECT DATABASE()', mysql_ensure_link($link_identifier));
-
 		# null does not fit mysql_result
 		$field = $field === null ? 0 : $field;
-
 		return mysql_result($result, $row, $field);
+	}
+
+	# mysql_dbname - Retrieves database name from the call to # mysql_list_dbs, alias for mysql_db_name
+	function mysql_dbname($result , $row, $field = NULL) {
+		return mysql_db_name($result, $row, $field);
 	}
 
 	# mysql_db_query - Selects a database and executes a query on it
