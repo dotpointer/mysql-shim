@@ -122,7 +122,7 @@ $shim_exists = file_exists('mysql-shim.php');
 echo 'Shim library present in testing directory: '.($shim_exists ? 'Yes' : 'No')."\n";
 
 # include the file to test
-echo 'Including shim library: '.(!$includeskip ? 'Yes' : 'No')."\n";
+echo 'Including shim library: '.(!$includeskip ? 'Yes (use -i to skip)' : 'No')."\n";
 if (!$includeskip) {
 	require_once('mysql-shim.php');
 }
