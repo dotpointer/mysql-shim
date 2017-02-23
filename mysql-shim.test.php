@@ -18,13 +18,15 @@
 	#	checks for function existence in test and correcting return value
 	#	validations to native PHP 5.6.3 function return values.
 	# 2017-02-22 20:43:16 - skipping but reporting functions that does not exist
+	# 2017-02-23 22:31:21 - adding constants check, editing parameters
 
 	# functions required to run the test:
 	# mysql_query, mysql_error, mysql_connect
 
-$time_start = microtime(true);
+
 $sqllog = array();
 $skipped = 0;
+$missing_constants = 0;
 
 if(defined('E_DEPRECATED')) {
     error_reporting(E_ALL &~ E_DEPRECATED);
@@ -70,7 +72,7 @@ function version_notice($function, $requiredbytest) {
 
 	# make sure it is not required by the test
 	if ($requiredbytest) {
-		echo 'Fatal error! This function is required by the test, cannot continue.';
+		echo 'Fatal error! This function is required by the test, cannot continue.'."\n";
 		die(1);
 	}
 	return true;
@@ -86,8 +88,7 @@ function print_help() {
 	echo '	-p <password> (optional, defaults to an empty string)'."\n";
 	echo '	-u <username> (optional, defaults to root)'."\n";
 	echo '	-y to continue without confirmation'."\n";
-	echo '	-i to include shim library even if not present in directory'."\n";
-	echo '	-I to skip shim library even if present in directory'."\n";
+	echo '	-i to skip including shim library - tests native PHP MySQL functions if available'."\n";
 	return true;
 }
 
@@ -100,8 +101,7 @@ $force		= isset($opt['f']);
 $database 	= isset($opt['d']) && strlen($opt['d']) ? $opt['d'] : 'testdatabase12345';;
 $help		= isset($opt['H']) || isset($opt['help']);
 $host 		= isset($opt['h']) && strlen($opt['h']) ? $opt['h'] : 'localhost';
-$include	= isset($opt['i']);
-$includeskip= isset($opt['I']);
+$includeskip= isset($opt['i']);
 $password	= isset($opt['p']) ? $opt['p'] : '';
 $username	= isset($opt['u']) && strlen($opt['u']) ? $opt['u'] : 'root';
 
@@ -114,53 +114,35 @@ if ($help) {
 
 # print intro
 echo 'Test of PHP MySQL to MySQLi migration shim library'."\n";
-echo 'Test started '.date('Y-m-d H:i:s')."\n";
 echo 'Uname: '.php_uname()."\n";
 echo 'PHP version: '.phpversion()."\n";
 
 # check if the shim exists
 $shim_exists = file_exists('mysql-shim.php');
-echo 'Shim library present in testing directory: '.($shim_exists ? 'yes' : 'no')."\n";
-
-# confirm user wants to continue, if not override is specified
-if (!$include && !$includeskip) {
-	if (!$shim_exists) {
-		# make sure user wants to do this
-		echo 'The shim library file (mysql-shim.php) is not present in the directory.'."\n";
-		echo 'Do you want to include it anyway? (It may be in global includes).'."\n";
-		echo 'Type "y" to try to include it: ';
-		$handle = fopen ("php://stdin","r");
-		$line = fgets($handle);
-		if(trim($line) === 'y'){
-			$include = true;
-		}
-		fclose($handle);
-		echo "\n";
-	} else {
-		$include = true;
-	}
-}
+echo 'Shim library present in testing directory: '.($shim_exists ? 'Yes' : 'No')."\n";
 
 # include the file to test
-echo 'Including shim library: '.($include && !$includeskip ? 'yes' : 'no')."\n";
-if ($include && !$includeskip) {
+echo 'Including shim library: '.(!$includeskip ? 'Yes' : 'No')."\n";
+if (!$includeskip) {
 	require_once('mysql-shim.php');
 }
 
 # make sure any extension is loaded
-echo 'MySQL extension loaded: '.(extension_loaded('mysql') ? 'yes' : 'no')."\n";
-echo 'MySQLi extension loaded: '.(extension_loaded('mysqli') ? 'yes' : 'no')."\n";
+echo 'MySQL extension loaded : '.(extension_loaded('mysql') ? 'Yes' : 'No')."\n";
+echo 'MySQLi extension loaded: '.(extension_loaded('mysqli') ? 'Yes' : 'No')."\n";
+
 if (!extension_loaded('mysql') && !extension_loaded('mysqli')) {
 	echo 'Fatal error! Neither MySQL nor MySQLi (preferred) extensions are loaded.'."\n";
-	echo 'Cannot continue without one of these.'."\n";
+	echo 'Cannot continue without one of these loaded.'."\n";
 	die(1);
 }
 
 # confirm user wants to continue, if not override is specified
-if (!$confirmed && extension_loaded('mysql')) {
+if (!$confirmed && extension_loaded('mysql') && !$includeskip) {
 	# make sure user wants to do this
 	echo "\n".'WARNING! The (original?) MySQL extension seems to be loaded.'."\n";
-	echo 'This will NOT test the library, but the native PHP MySQL extension functions.'."\n";
+	echo 'This will NOT test the library functions, but the native PHP MySQL extension functions.'."\n";
+	echo 'Also consider using -i which does not include the library at all.'."\n";
 	echo 'Are you sure you want to do this?  Type "y" to continue: ';
 	$handle = fopen ("php://stdin","r");
 	$line = fgets($handle);
@@ -192,6 +174,26 @@ if (!$confirmed) {
 	}
 	fclose($handle);
 	echo "\n";
+}
+
+$time_start = microtime(true);
+echo 'Test started '.date('Y-m-d H:i:s')."\n";
+
+# --- check constants
+foreach (array(
+	'MYSQL_ASSOC',
+	'MYSQL_BOTH',
+	'MYSQL_CLIENT_COMPRESS',
+	'MYSQL_CLIENT_IGNORE_SPACE',
+	'MYSQL_CLIENT_INTERACTIVE',
+	'MYSQL_CLIENT_SSL',
+	'MYSQL_NUM'
+) as $const) {
+	if (defined($const)) {
+		echo 'Constant '.$const.' is defined = OK'."\n";
+	} else {
+		echo '! Constant '.$const.' is NOT defined'."\n";
+	}
 }
 
 # --- mysql_connect
@@ -1460,9 +1462,16 @@ echo 'Test duration '.(microtime(true) - $time_start).' seconds'."\n";
 echo 'Test completed '.date('Y-m-d H:i:s')."\n";
 if ($skipped) {
 	echo 'Skipped testing of '.$skipped.' function(s), see details above.'."\n";
-	echo 'This is normal when testing native functions as a few may be available.'."\n";
-} else {
-	echo 'No errors found, all functions tested.'."\n";
+	echo 'This is normal when testing native functions as a few may not be available.'."\n";
+}
+
+if ($missing_constants) {
+	echo 'Missing '.$missing_constants.' constant(s), see details above.'."\n";
+	echo 'This is normal when testing native constants as a few may not be available.'."\n";
+}
+
+if (!$skipped && !$missing_constants) {
+	echo 'No errors found, all functions tested and all constants exist.'."\n";
 }
 
 #   function is_mysqli_or_resource($r)
