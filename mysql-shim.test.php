@@ -19,14 +19,17 @@
 	#	validations to native PHP 5.6.3 function return values.
 	# 2017-02-22 20:43:16 - skipping but reporting functions that does not exist
 	# 2017-02-23 22:31:21 - adding constants check, editing parameters
+	# 2017-02-23 23:34:22 - removing getopt, using argv instead, noted by Tony Russo
+	# 2017-02-23 23:54:33 - adding deeper test of constants, bugfix to mysql_real_escape_string
 
 	# functions required to run the test:
 	# mysql_query, mysql_error, mysql_connect
 
 
 $sqllog = array();
-$skipped = 0;
-$missing_constants = 0;
+$skippedfunctions = 0;
+$skippedconstants = 0;
+$strangeconstants = 0;
 
 if(defined('E_DEPRECATED')) {
     error_reporting(E_ALL &~ E_DEPRECATED);
@@ -66,8 +69,8 @@ function error($line, $error) {
 }
 
 function version_notice($function, $requiredbytest) {
-	global $skipped;
-	$skipped += 1;
+	global $skippedfunctions;
+	$skippedfunctions += 1;
 	echo '! SKIPPING '.$function.', does not exist, will not be tested.'."\n";
 
 	# make sure it is not required by the test
@@ -81,39 +84,97 @@ function version_notice($function, $requiredbytest) {
 # to print help
 function print_help() {
 	echo 'The following parameters can be specified: '."\n";
-	echo '	-d <database> (optional, defaults to testdatabase12345, to be created and deleted)'."\n";
+	echo '	-d "database" (optional, defaults to testdatabase12345, to be created and deleted)'."\n";
 	echo '	-f to drop database if it exists'."\n";
-	echo '	-h <hostname> (optional, defaults to localhost)'."\n";
-	echo '	-H or --help show this help'."\n";
-	echo '	-p <password> (optional, defaults to an empty string)'."\n";
-	echo '	-u <username> (optional, defaults to root)'."\n";
-	echo '	-y to continue without confirmation'."\n";
+	echo '	-H "hostname" (optional, defaults to localhost)'."\n";
+	echo '	-h or --help show this help'."\n";
 	echo '	-i to skip including shim library - tests native PHP MySQL functions if available'."\n";
+	echo '	-p "password" (optional, defaults to an empty string)'."\n";
+	echo '	-u "username" (optional, defaults to root)'."\n";
+	echo '	-y to continue without confirmation'."\n";
 	return true;
 }
 
-# get parameters
-$opt = getopt('fyh:u:p:d:HiI', array('help'));
+# default parameters
+$confirmed		= false;
+$database 		= 'testdatabase12345';;
+$force			= false;
+$help			= false;
+$host 			= 'localhost';
+$includeskip	= false;
+$password		= '';
+$username		= 'root';
 
-# get parameters
-$confirmed	= isset($opt['y']);
-$force		= isset($opt['f']);
-$database 	= isset($opt['d']) && strlen($opt['d']) ? $opt['d'] : 'testdatabase12345';;
-$help		= isset($opt['H']) || isset($opt['help']);
-$host 		= isset($opt['h']) && strlen($opt['h']) ? $opt['h'] : 'localhost';
-$includeskip= isset($opt['i']);
-$password	= isset($opt['p']) ? $opt['p'] : '';
-$username	= isset($opt['u']) && strlen($opt['u']) ? $opt['u'] : 'root';
+echo 'Test of PHP MySQL to MySQLi migration shim library'."\n";
 
-# is help requested?
-if ($help) {
-	# print help
-	print_help();
-	die(0);
+# walk parameters
+# cannot use getopt, introduced too late at 5.3 in windows
+$skipnext = false;
+if (isset($argv) && is_array($argv)) {
+	foreach ($argv as $k => $v) {
+
+		# should this argument be skipped? (used previously)
+		if ($skipnext) {
+			$skipnext = false;
+			continue;
+		}
+
+		# find out what parameter to check
+		switch ($v) {
+			case '-d':
+				# need next parameter
+				if (!isset($argv[$k + 1])) break;
+				$database = $argv[$k + 1];
+				$skipnext = true;
+				break;
+
+			case '-f': # force
+				$force = true;
+				$skipnext = false;
+				break;
+
+			case '-h': # print help
+			case '--help':
+				# print help
+				print_help();
+				die(0);
+
+			case '-i': # include skip
+				$includeskip = true;
+				$skipnext = false;
+				break;
+
+			case '-u': # username
+				# need next parameter
+				if (!isset($argv[$k + 1])) break;
+				$username = $argv[$k + 1];
+				$skipnext = true;
+				break;
+
+			case '-p': # password
+				# need next parameter
+				if (!isset($argv[$k + 1])) break;
+				$password = $argv[$k + 1];
+				$skipnext = true;
+				break;
+
+			case '-H': # hostname
+				if (!isset($argv[$k + 1])) break;
+				$hostname = $argv[$k + 1];
+				$skipnext = true;
+				break;
+
+			case '-y': # no confirm
+				$confirmed = true;
+				$skipnext = false;
+				break;
+		}
+	}
+} else {
+	echo 'Warning! Could not read arguments (argv).'."\n";
 }
 
 # print intro
-echo 'Test of PHP MySQL to MySQLi migration shim library'."\n";
 echo 'Uname: '.php_uname()."\n";
 echo 'PHP version: '.phpversion()."\n";
 
@@ -181,17 +242,28 @@ echo 'Test started '.date('Y-m-d H:i:s')."\n";
 
 # --- check constants
 foreach (array(
-	'MYSQL_ASSOC',
-	'MYSQL_BOTH',
-	'MYSQL_CLIENT_COMPRESS',
-	'MYSQL_CLIENT_IGNORE_SPACE',
-	'MYSQL_CLIENT_INTERACTIVE',
-	'MYSQL_CLIENT_SSL',
-	'MYSQL_NUM'
-) as $const) {
+	'MYSQL_ASSOC' => 1,
+	'MYSQL_BOTH' => 3,
+	'MYSQL_CLIENT_COMPRESS' => 32,
+	'MYSQL_CLIENT_IGNORE_SPACE' => 256,
+	'MYSQL_CLIENT_INTERACTIVE' => 1024,
+	'MYSQL_CLIENT_SSL' => 2048,
+	'MYSQL_NUM' => 2
+) as $const => $value) {
 	if (defined($const)) {
-		echo 'Constant '.$const.' is defined = OK'."\n";
+		echo 'Constant '.$const.' is defined, value is ';
+		echo '['.gettype(constant($const)).'] '.(!is_object(constant($const)) ? (!is_array(constant($const)) ? var_export(constant($const), true) : 'array') : 'object').' = ';
+		# does constant value match the expected value?
+		if (constant($const) === $value) {
+			echo 'OK'."\n";
+		} else {
+			$strangeconstants++;
+			echo 'Suspicious, should be ';
+			echo '['.gettype($value).'] '.(!is_object($value) ? (!is_array($value) ? var_export($value, true) : 'array') : 'object');
+			echo "\n";
+		}
 	} else {
+		$skippedconstants++;
 		echo '! Constant '.$const.' is NOT defined'."\n";
 	}
 }
@@ -267,7 +339,7 @@ if (function_exists('mysql_error')) {
 }
 
 # --- mysql_real_escape_string
-$function = 'mysql_escape_string';
+$function = 'mysql_real_escape_string';
 $required = false;
 if (function_exists($function)) {
 	# true
@@ -1460,17 +1532,21 @@ if (function_exists($function)) {
 # --- end of test
 echo 'Test duration '.(microtime(true) - $time_start).' seconds'."\n";
 echo 'Test completed '.date('Y-m-d H:i:s')."\n";
-if ($skipped) {
-	echo 'Skipped testing of '.$skipped.' function(s), see details above.'."\n";
+if ($skippedfunctions) {
+	echo 'Skipped testing of '.$skippedfunctions.' function(s), see details above.'."\n";
 	echo 'This is normal when testing native functions as a few may not be available.'."\n";
 }
 
-if ($missing_constants) {
-	echo 'Missing '.$missing_constants.' constant(s), see details above.'."\n";
+if ($skippedconstants) {
+	echo 'Missing '.$skippedconstants.' constant(s), see details above.'."\n";
 	echo 'This is normal when testing native constants as a few may not be available.'."\n";
 }
 
-if (!$skipped && !$missing_constants) {
+if ($strangeconstants) {
+	echo 'Found '.$skippedconstants.' constant(s) with unexpected values, see details above.'."\n";
+}
+
+if (!$skippedfunctions && !$skippedconstants && !$strangeconstants) {
 	echo 'No errors found, all functions tested and all constants exist.'."\n";
 }
 
