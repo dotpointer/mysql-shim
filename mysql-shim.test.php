@@ -25,6 +25,7 @@
 	#	mysql_real_escape_string
 	# 2017-02-24 00:40:12 - making test continue on non-test-critical errors but
 	# 	only report it, adding return codes
+	# 2017-02-24 12:34:00 - moving up mysql_fetch_assoc, bugfix to arguments and return codes
 
 	# functions required to run the test:
 	# mysql_query, mysql_error, mysql_connect
@@ -178,7 +179,7 @@ if (isset($argv) && is_array($argv)) {
 
 			case '-H': # hostname
 				if (!isset($argv[$k + 1])) break;
-				$hostname = $argv[$k + 1];
+				$host = $argv[$k + 1];
 				$skipnext = true;
 				break;
 
@@ -328,7 +329,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_errno('ABCDEFGH12345');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -353,7 +354,7 @@ if (function_exists('mysql_error')) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_error('ABCDEFGH12345');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -452,6 +453,38 @@ if (function_exists($function)) {
 	}
 } else {
 	version_notice($function, $required);
+}
+
+# --- mysql_fetch_assoc
+$function = 'mysql_fetch_assoc';
+$required = true;
+if (function_exists($function)) {
+	# run query
+	$temp = db_query($link, __LINE__, 'SHOW DATABASES');
+	# true
+	echo 'Testing '.$function.' return value...';
+	$r = mysql_fetch_assoc($temp);
+	if (!is_array($r)) {
+		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
+	} else {
+		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
+	}
+	# false
+	echo 'Testing '.$function.' error return value...';
+	$r = @mysql_fetch_assoc('INVALID_LINK');
+	if ($r !== NULL) {
+		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
+	} else {
+		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
+	}
+} else {
+	version_notice($function, $required);
+}
+
+# --- request db version info
+$r = db_query($link, __LINE__, 'SHOW VARIABLES LIKE "%version%";');
+while ($row = mysql_fetch_assoc($r)) {
+	echo 'Database system, '.$row['Variable_name'].': '.$row['Value']."\n";
 }
 
 # --back to mysql_query: a boolean
@@ -798,32 +831,6 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_fetch_array('INVALID_LINK');
-	if ($r !== NULL) {
-		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
-	} else {
-		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
-	}
-} else {
-	version_notice($function, $required);
-}
-
-# --- mysql_fetch_assoc
-$function = 'mysql_fetch_assoc';
-$required = true;
-if (function_exists($function)) {
-	# run query
-	$temp = db_query($link, __LINE__, 'SHOW DATABASES');
-	# true
-	echo 'Testing '.$function.' return value...';
-	$r = mysql_fetch_assoc($temp);
-	if (!is_array($r)) {
-		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
-	} else {
-		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
-	}
-	# false
-	echo 'Testing '.$function.' error return value...';
-	$r = @mysql_fetch_assoc('INVALID_LINK');
 	if ($r !== NULL) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
@@ -1652,27 +1659,37 @@ $returncode = 0;
 
 if ($functionsfailed) {
 	echo '! Found '.$functionsfailed.' function(s) that failed, see details above.'."\n";
-	$returncode = 1; # very bad
+	if ($returncode < 1) {
+		$returncode = 1; # very bad
+	}
 }
 
 if ($skippedfunctions) {
 	echo '! Skipped testing of '.$skippedfunctions.' function(s), see details above.'."\n";
 	if ($skippedfunctions <= 5) {
 		echo 'This is normal when testing native functions as a few may not be available.'."\n";
-		$returncode = 2; # not so bad
+		if ($returncode < 2) {
+			$returncode = 2; # not so bad
+		}
 	} else {
-		$returncode = 1; # very bad
+		if ($returncode < 1) {
+			$returncode = 1; # very bad
+		}
 	}
 }
 
 if ($skippedconstants) {
 	echo '! Missing '.$skippedconstants.' constant(s), see details above.'."\n";
-	$returncode = 1; # very bad
+	if ($returncode < 1) {
+		$returncode = 1; # very bad
+	}
 }
 
 if ($strangeconstants) {
 	echo '! Found '.$skippedconstants.' constant(s) with unexpected values, see details above.'."\n";
-	$returncode = 2; # not so bad
+	if ($returncode < 2) {
+		$returncode = 2; # not so bad
+	}
 }
 
 if (!$skippedfunctions && !$skippedconstants && !$strangeconstants && !$functionsfailed) {
