@@ -1,36 +1,36 @@
 <?php
-	# test file for mysql shim library
-	# by robert klebe, dotpointer
+# test file for mysql shim library
+# by robert klebe, dotpointer
 
-	# changelog
-	# 2016-02-24 15:27:05 - first version
-	# 2016-12-26 15:08:00 - renaming file from mysql.test.php to
-	#	mysql-shim.test.php
-	# 2017-02-20 18:06:00 - bugfix, renaming inclusion of library file
-	# 2017-02-20 20:10:00 - bugfix, invalid connection credentials
-	#	resulted in error, printing help on connect error, thanks to Tony Russo
-	#	for finding it
-	# 2017-02-20 22:19:21 - adding tests for mysql_query,
-	#	mysql_unbuffered_query, mysql_num_rows, mysql_pconnect etc.
-	# 2017-02-21 18:56:20 - rewriting error handling
-	# 2017-02-22 00:52:08 - Making it possible to test native PHP functions by
-	#	request from Tony Russo and to exclude the shim from the test. Adding
-	#	checks for function existence in test and correcting return value
-	#	validations to native PHP 5.6.3 function return values.
-	# 2017-02-22 20:43:16 - skipping but reporting functions that does not exist
-	# 2017-02-23 22:31:21 - adding constants check, editing parameters
-	# 2017-02-23 23:34:22 - removing getopt, using argv instead, noted by
-	#	Tony Russo
-	# 2017-02-23 23:54:33 - adding deeper test of constants, bugfix to
-	#	mysql_real_escape_string
-	# 2017-02-24 00:40:12 - making test continue on non-test-critical errors but
-	# 	only report it, adding return codes
-	# 2017-02-24 12:34:00 - moving up mysql_fetch_assoc, bugfix to arguments and return codes
-	# 2017-02-24 17:56:53 - allowing false as error return value for a lot of
-	#	functions
+# changelog
+# 2016-02-24 15:27:05 - first version
+# 2016-12-26 15:08:00 - renaming file from mysql.test.php to
+# mysql-shim.test.php
+# 2017-02-20 18:06:00 - bugfix, renaming inclusion of library file
+# 2017-02-20 20:10:00 - bugfix, invalid connection credentials
+# resulted in error, printing help on connect error, thanks to Tony Russo
+# for finding it
+# 2017-02-20 22:19:21 - adding tests for mysql_query,
+# mysql_unbuffered_query, mysql_num_rows, mysql_pconnect etc.
+# 2017-02-21 18:56:20 - rewriting error handling
+# 2017-02-22 00:52:08 - Making it possible to test native PHP functions by
+# request from Tony Russo and to exclude the shim from the test. Adding
+# checks for function existence in test and correcting return value
+# validations to native PHP 5.6.3 function return values.
+# 2017-02-22 20:43:16 - skipping but reporting functions that does not exist
+# 2017-02-23 22:31:21 - adding constants check, editing parameters
+# 2017-02-23 23:34:22 - removing getopt, using argv instead, noted by
+# Tony Russo
+# 2017-02-23 23:54:33 - adding deeper test of constants, bugfix to
+# mysql_real_escape_string
+# 2017-02-24 00:40:12 - making test continue on non-test-critical errors but
+# only report it, adding return codes
+# 2017-02-24 12:34:00 - moving up mysql_fetch_assoc, bugfix to arguments and return codes
+# 2017-02-24 17:56:53 - allowing false as error return value for a lot of
+# functions
 
-	# functions required to run the test:
-	# mysql_query, mysql_error, mysql_connect
+# functions required to run the test:
+# mysql_query, mysql_error, mysql_connect
 
 
 $functionsfailed = 0;
@@ -914,7 +914,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_fetch_object('INVALID_LINK');
-	if ($r !== false) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
