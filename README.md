@@ -42,15 +42,15 @@ PHP MySQL to MySQLi migration shim library
 
 * Usage examples
 
-	* You have a web site that relies on the PHP MySQL functions and want it to run on modern versions of PHP - this library should do it.
+	* You have a web site that relies on the MySQL functions and want it to run on modern versions of PHP - this library should do it.
 
-	* Your web host is missing the PHP MySQL functions that you built your site with - this library should fill that gap, providing they have MySQLi support.
+	* Your web host is missing the MySQL functions that you built your site with - this library should fill that gap, providing they have MySQLi support.
 
 	* You don't want to learn the new MySQLi functions and want to continue using the traditional MySQL functions - include the library and you can continue like it was 2001.
 
-	* You want to speed up a web site that uses the PHP MySQL functions by tricking it to run PHP MySQLi functions without knowing it - this library will boost performance by running your MySQL project on MySQLi functions.
+	* You want to speed up a web site that uses the MySQL functions by tricking it to run MySQLi functions without knowing it - this library will boost performance by running your MySQL project on MySQLi functions.
 
-	* You want to convert a PHP MySQL function enabled site or project to using PHP MySQLi functions instead - include this library and tear it down piece by piece while converting your project.
+	* You want to convert a MySQL function enabled site or project to using MySQLi functions instead - include this library and tear it down piece by piece while converting your project.
 
 	* You want to switch storage solution in a project from using (PHP) MySQL (functions) to something else like SQlite - include and build upon this library, the original functions that your project expects to exist are defined.
 
