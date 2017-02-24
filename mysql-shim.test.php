@@ -26,16 +26,18 @@
 	# 2017-02-24 00:40:12 - making test continue on non-test-critical errors but
 	# 	only report it, adding return codes
 	# 2017-02-24 12:34:00 - moving up mysql_fetch_assoc, bugfix to arguments and return codes
+	# 2017-02-24 17:56:53 - allowing false as error return value for a lot of
+	#	functions
 
 	# functions required to run the test:
 	# mysql_query, mysql_error, mysql_connect
 
 
-$sqllog = array();
-$skippedfunctions = 0;
-$skippedconstants = 0;
-$strangeconstants = 0;
 $functionsfailed = 0;
+$skippedconstants = 0;
+$skippedfunctions = 0;
+$sqllog = array();
+$strangeconstants = 0;
 
 if(defined('E_DEPRECATED')) {
     error_reporting(E_ALL &~ E_DEPRECATED);
@@ -378,7 +380,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_real_escape_string($link); # send in an object
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -445,8 +447,8 @@ if (function_exists($function)) {
 	}
 	# false
 	echo 'Testing '.$function.' error return value...';
-	$r = @mysql_num_rows('faail');
-	if ($r !== NULL) {
+	$r = @mysql_num_rows('fail');
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -472,7 +474,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_fetch_assoc('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -579,7 +581,7 @@ if (function_exists($function)) {
 	# integer = -1
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_affected_rows('INVALID_LINK');
-	if (/*!is_numeric($r) || $r !== -1*/ $r !== NULL) {
+	if ($r !== -1 && $r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -603,7 +605,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_client_encoding('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -693,7 +695,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_data_seek($r, 999999);
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -831,7 +833,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_fetch_array('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -857,7 +859,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_fetch_field('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -884,7 +886,7 @@ if (function_exists($function)) {
 		# false
 		echo 'Testing '.$function.' error return value...';
 		$r = @mysql_fetch_lengths('INVALID_LINK');
-		if ($r !== NULL) {
+		if ($r !== NULL && $r !== false) {
 			error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 		}
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -938,7 +940,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_fetch_row('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -967,7 +969,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_field_flags('INVALID_LINK', 0);
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -996,7 +998,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_field_len('INVALID_LINK', 0);
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 		die(1);
 	} else {
@@ -1025,7 +1027,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_field_name('INVALID_LINK', 0);
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1053,7 +1055,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_field_seek('INVALID_LINK', 0);
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1081,7 +1083,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_field_table('INVALID_LINK', 0);
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1110,7 +1112,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_field_type('INVALID_LINK', 0);
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1180,7 +1182,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_get_host_info('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1205,7 +1207,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_get_proto_info('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1230,7 +1232,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_get_server_info('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1258,7 +1260,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_info('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1286,7 +1288,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_insert_id('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1302,7 +1304,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_list_dbs('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1334,7 +1336,7 @@ if (function_exists($function)) {
 	 #false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_list_fields($database, 'doesnotexist', $link);
-	if ($r !== false) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1358,7 +1360,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_list_processes('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1407,7 +1409,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_num_fields(false);
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1461,7 +1463,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_ping('ABCDEFGH12345');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1486,7 +1488,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_result($r, 1000, 'nonexistant');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1534,7 +1536,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_stat('INVALID_LINK');
-	if ($r !== null) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
@@ -1582,7 +1584,7 @@ if (function_exists($function)) {
 	# false
 	echo 'Testing '.$function.' error return value...';
 	$r = @mysql_thread_id('INVALID_LINK');
-	if ($r !== NULL) {
+	if ($r !== NULL && $r !== false) {
 		error($required, __LINE__, 'FAIL, invalid return value: '.var_export($r, true));
 	} else {
 		echo '['.gettype($r).'] '.(!is_object($r) ? (!is_array($r) ? var_export($r, true) : 'array') : 'object').' = OK'."\n";
