@@ -5,6 +5,7 @@ PHP MySQL to MySQLi migration shim library
 	* Purpose - The purpose of the library
 	* Project goal - The goal of the project
 	* Problem - The problem the library solves
+	* Usage examples
 	* How the library works
 	* Good - benefits, features and things you get in return when using the library
 	* Bad - pitfalls, problems and things to take in to consideration when using the library
@@ -19,6 +20,7 @@ PHP MySQL to MySQLi migration shim library
 * Purpose
 
 	Seamlessly redefines deprecated or missing mysql_ functions and MYSQL_ constants and calls the corresponding mysqli_ functions for PHP5.5+.
+	Converting PHP MySQL function calls to PHP MySQLi function calls.
 
 * Project goal
 
@@ -38,28 +40,42 @@ PHP MySQL to MySQLi migration shim library
 		* Run automatic conversion tool on the source that do the change. I have not tried this.
 		* Disable the mysql extension, write a migration library that mimics the mysql_ functions and calls mysqli_ functions. This is what this page and the library is about.
 
+* Usage examples
+
+	* You have a web site that relies on the PHP MySQL functions and want it to run on modern versions of PHP - this library should do it.
+
+	* Your web host is missing the PHP MySQL functions that you built your site with - this library should fill that gap, providing they have MySQLi support.
+
+	* You don't want to learn the new MySQLi functions and want to continue using the traditional MySQL functions - include the library and you can continue like it was 2001.
+
+	* You want to speed up a web site that uses the PHP MySQL functions by tricking it to run PHP MySQLi functions without knowing it - this library will boost performance by running your MySQL project on MySQLi functions.
+
+	* You want to convert a PHP MySQL function enabled site or project to using PHP MySQLi functions instead - include this library and tear it down piece by piece while converting your project.
+
+	* You want to switch storage solution in a project from using (PHP) MySQL (functions) to something else like SQlite - include and build upon this library, the original functions that your project expects to exist are defined.
+
 * How the library works
 
 	If the mysql extension is missing but the mysqli extension is available, then it defines new mysql_ functions that executes the corresponding mysqli_ functions.
-	
+
 	If the original mysql extension is there, then not much is done, as all is fine and dandy (except for E_DEPRECATED warnings, which must be neglected manually).
-	
+
 	If none of the mysql or the mysqli extensions are loaded, then it dies, halting with an error.
-	
+
 	The library defines many mysql_ functions that do not have any corresponding mysqli_ alternative, by combining mysqli_ functionality or by fiddling in other ways.
 
 	* Good - benefits, features and things you get in return
 
 		You save time by not needing to change the code base just because PHP decided to change its functions and can continue with more important tasks.
-		
+
 		MySQLi extension is faster than MySQL extension, so your applications may be faster too.
-		
+
 		It is tested by others and a testing script is available to test it yourself. Sites and projects already using the library as a proof of that the library is working may be found at the bottom of this page.
-		
+
 		With this library you can continue to use the old mysql_ functions without caring about learning the new mysqli_ functions.
-		
+
 		The library can be edited to monitor and modify database data at a level you could not reach so easily before. For example, you could edit the mysql_query() shim function in the library to write all executed queries to a log file, or neglect all UPDATE, INSERT and DELETE queries or forward them to another server.
-		
+
 		It is open source and the license is public domain.
 
 	* Bad - pitfalls, problems and things to take in to consideration
@@ -74,7 +90,7 @@ PHP MySQL to MySQLi migration shim library
 			if (is_object($result)) {...}
 		?>
 
-			
+
 		This is an fairly easy search-and-replace operation if you compare to fix up all mysql_ functions to mysqli_ functions.
 
 		To ease this even more and make your code backward compatible I have bundled a is_resource_or_mysqli() function that checks if mysql is loaded, then looks for a (mysql) resource, or if mysqli is loaded then it looks for a mysqli object - or if none, then responds with false. You replace is_resource() with is_resource_or_mysqli().
@@ -87,17 +103,17 @@ PHP MySQL to MySQLi migration shim library
 
 			find /home/user/public_html -type f -iname \*.php \
 				-exec sed -i 's/is_resource/is_resource_or_mysqli/g' {} \;
-		
+
 		This library integrates at a critical level if you care about your database data. It jumps in between your application and the MySQL(i) extension and translates in both ways. I and the contributors have tried to make the library as correct and accurate as possible, but errors may exist. In a worst case scenario you may loose your data, although that is very unlikely.
-	
+
 		* More testing is encouraged, although the library has been used and therefore tested by the contributors and there is also a testing script to test the library before you use it in critical systems.
-	
+
 		* If you want to get rid of the E_DEPRECATED, you have some options:
-	
+
 		Make PHP ignore E_DEPRECATED warnings by suppressing them. May be done through php.ini or at runtime.
-	
+
 		Make PHP not to load the mysql extension, by commenting out the extension=mysql.so / extension=php_mysql.dll line in the php.ini file. Note for Ubuntu (~13.04) users: Even if you installed php5-mysql the extension is possible to comment out, check out the /etc/php5/mods-available/mysql.ini file).
-	
+
 		* Some functions may be missing, and some may (but should not) return data that is not equal to the original mysql_ versions.
 
 * Usage
@@ -129,8 +145,8 @@ PHP MySQL to MySQLi migration shim library
 	<?php require_once("mysql-shim/mysql-shim.php"); ?>
 	You may place the file in a directory covered by the global include paths stated in the php.ini file:
 
-		include_path = ".:/path/to/directory/where/mysql-shim.php/is/located:/usr/lib/php"	
-	
+		include_path = ".:/path/to/directory/where/mysql-shim.php/is/located:/usr/lib/php"
+
 	This way you only need one copy of the library located in one of the directories in the include_path. You still need to include it though, using require_once() as stated above.
 
 	Alternative usage - auto_prepend
@@ -140,11 +156,11 @@ PHP MySQL to MySQLi migration shim library
 	In php.ini:
 
 		auto_prepend_file=/path/to/mysql-shim.php
-	
+
 	or in apache's httpd.conf or .htaccess:
 
 		php_value auto_prepend_file /path/to/mysql-shim.php
-	
+
 	Alternative usage - rename functions
 
 	If do not have write access to the PHP configuration on the server or something else prevents you from disabling the MySQL extension then you do not have so many choices but to rename all the mysql_ functions in the library and in your code base - or rewrite the code base to use the new mysqli_ functions.
@@ -161,13 +177,13 @@ PHP MySQL to MySQLi migration shim library
 
 * Usage of the testing script
 
-	Place the testing script in the same directory as the library (but not in an outside world-accessible directory just to be safe) 
+	Place the testing script in the same directory as the library (but not in an outside world-accessible directory just to be safe)
 
-	Make sure that the MySQL extension is disabled and that the MySQLi extension is enabled 
+	Make sure that the MySQL extension is disabled and that the MySQLi extension is enabled
 
-	Go to the directory when you placed the testing script and the library with a terminal/console 
+	Go to the directory when you placed the testing script and the library with a terminal/console
 
-	Run it with PHP, replace credential placeholders with root username and password, or an MySQL user that has the same MySQL privileges: 
+	Run it with PHP, replace credential placeholders with root username and password, or an MySQL user that has the same MySQL privileges:
 	/usr/bin/php mysql-shim.test.php -h localhost -u mysql-root-username -p mysql-root-password
 
 	If it works it runs through all the functions and does live tests.
@@ -191,7 +207,7 @@ PHP MySQL to MySQLi migration shim library
 	-y to continue without confirmation
 
 	-i to skip shim library even if present in directory
-		
+
 * License
 
 	Public domain, edit and share without my permission. Contain comments from PHP.net that may rule under different licenses. I do not take any responsibility and I am not liable for any damage caused through use of the code.
