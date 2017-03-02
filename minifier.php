@@ -12,8 +12,9 @@
 # Writes minified code to ‘mysql-shim-min.php’
 
 # Changelog
-# 2017-02-27 01:47:00 tr - First version 
-# 2017-03-02 20:35:08 rk - Small edit of comments format, rename output file, turning returns to spaces
+# 2017-02-27 01:47:00 TR - First version
+# 2017-03-02 20:35:08 RK - Small edit of comments format, rename output file, turning returns to spaces
+# 2017-03-02 22:19:00 TR - Bugfix, space before and after php tag
 
 # Regular Expressions to minify
 $patterns = array(
@@ -21,6 +22,8 @@ $patterns = array(
 	'/\n/Um', # LineFeeds
 	'/\r/Um', # Returns
 	'/^\s+|\s+$|\s+(?=\s)/Um', # WhiteSpace
+	'/(<\?php)/Umi', # Add space after <? php
+	'/(\?>)/Umi', # Add space before ? >
 	'/\t/Um'  # Tabs
 );
 
@@ -28,9 +31,11 @@ $patterns = array(
 $replacements = array(
 	'', # No Comments
 	'', # No LineFeeds
-	' ', # No Returns
+	'', # No Returns
 	'', # No WhiteSpace
-	''  # No Tabs
+	'${1} ',# Add space after <? php
+	' ${1}',# Add space before ? >
+	'' # No Tabs
 );
 
 # Load soruce code
