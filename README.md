@@ -167,6 +167,14 @@ PHP MySQL to MySQLi migration shim library
 
 	If the code base is not too big you could replace "mysql_" with "mysql_shim_" for example, to avoid name collision between the functions. You do also need to rename the MYSQL_ constants.
 
+* Minified version
+
+	Tony Russo has contributed with a minifier script that generates a minified version of the shim library.
+
+	The reason for this is the difference in footprint, the minified version is about 11 kB while the uncompressed is about 37 kB.
+
+	The minified version may benefit from faster loading. The minifier script is also included. Run it to generate a minified version of the shim library based on the uncompressed version.
+
 * Testing
 
 	As of february 2016 I have written a testing script to test the library. It walks through the functions in the library and runs them to check if the return values and the return values upon errors are correct according to PHP.net manual.
@@ -199,6 +207,8 @@ PHP MySQL to MySQLi migration shim library
 	-H "hostname" (optional, defaults to localhost)
 
 	-h or --help show this help
+
+	-m to test the minified version
 
 	-p "password" (optional, defaults to an empty string)
 

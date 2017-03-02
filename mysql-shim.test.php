@@ -27,11 +27,12 @@
 # only report it, adding return codes
 # 2017-02-24 12:34:00 - moving up mysql_fetch_assoc, bugfix to arguments and return codes
 # 2017-02-24 17:56:53 - allowing false as error return value for a lot of
+# 2017-03-02 20:57:19 - adding test for minified version
+
 # functions
 
 # functions required to run the test:
 # mysql_query, mysql_error, mysql_connect
-
 
 $functionsfailed = 0;
 $skippedconstants = 0;
@@ -102,14 +103,15 @@ function version_notice($function, $requiredbytest) {
 # to print help
 function print_help() {
 	echo 'The following parameters can be specified: '."\n";
-	echo '	-d "database" (optional, defaults to testdatabase12345, to be created and deleted)'."\n";
-	echo '	-f to drop database if it exists'."\n";
-	echo '	-H "hostname" (optional, defaults to localhost)'."\n";
-	echo '	-h or --help show this help'."\n";
-	echo '	-i to skip including shim library - tests native PHP MySQL functions if available'."\n";
-	echo '	-p "password" (optional, defaults to an empty string)'."\n";
-	echo '	-u "username" (optional, defaults to root)'."\n";
-	echo '	-y to continue without confirmation'."\n";
+	echo ' -d "database" (optional, defaults to testdatabase12345, to be created and deleted)'."\n";
+	echo ' -f to drop database if it exists'."\n";
+	echo ' -H "hostname" (optional, defaults to localhost)'."\n";
+	echo ' -h or --help show this help'."\n";
+	echo ' -i to skip including shim library - tests native PHP MySQL functions if available'."\n";
+	echo ' -m to test the minified shim library version'."\n";
+	echo ' -p "password" (optional, defaults to an empty string)'."\n";
+	echo ' -u "username" (optional, defaults to root)'."\n";
+	echo ' -y to continue without confirmation'."\n";
 	echo 'Script returns 0 on passing all tests, 1 on fatal errors and 2 on warnings'."\n";
 	echo '- Warnings: skipped constants, constants with suspicious values, skipped functions'."\n";
 	echo '- Fatal errors: failing functions or more than 5 skipped functions'."\n";
@@ -123,6 +125,7 @@ $force			= false;
 $help			= false;
 $host 			= 'localhost';
 $includeskip	= false;
+$minified		= false;
 $password		= '';
 $username		= 'root';
 
@@ -165,6 +168,10 @@ if (isset($argv) && is_array($argv)) {
 				$skipnext = false;
 				break;
 
+			case '-m': # test minified version
+				$minified = true;
+				break;
+
 			case '-u': # username
 				# need next parameter
 				if (!isset($argv[$k + 1])) break;
@@ -203,10 +210,21 @@ echo 'PHP version: '.phpversion()."\n";
 $shim_exists = file_exists('mysql-shim.php');
 echo 'Shim library present in testing directory: '.($shim_exists ? 'Yes' : 'No')."\n";
 
+# check if the minifiedshim exists
+$shim_exists = file_exists('mysql-shim-min.php');
+echo 'Shim library present in testing directory: '.($shim_exists ? 'Yes' : 'No')."\n";
+
 # include the file to test
 echo 'Including shim library: '.(!$includeskip ? 'Yes (use -i to skip)' : 'No')."\n";
 if (!$includeskip) {
-	require_once('mysql-shim.php');
+	echo 'Including shim library variant: '.($minified ? 'Minified version' : 'Uncompressed version')."\n";
+
+	# minified or not minified
+	if ($minified) {
+		require_once('mysql-shim.min.php');
+	} else {
+		require_once('mysql-shim.php');
+	}
 }
 
 # make sure any extension is loaded
