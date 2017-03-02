@@ -10,6 +10,7 @@ PHP MySQL to MySQLi migration shim library
 	* Good - benefits, features and things you get in return when using the library
 	* Bad - pitfalls, problems and things to take in to consideration when using the library
 	* Usage - How to use it
+	* Minified version
 	* Testing - How to test the library before you use it in critical situations
 	* License - Information about the license for the library and the testing script
 	* Sites and projects in the world using the library - Proof that it is in use
@@ -171,9 +172,11 @@ PHP MySQL to MySQLi migration shim library
 
 	Tony Russo has contributed with a minifier script that generates a minified version of the shim library.
 
-	The reason for this is the difference in footprint, the minified version is about 11 kB while the uncompressed is about 37 kB.
+	The reason for this is the difference in footprint, the minified version is about 11 kB while the uncompressed is about 37 kB due to the large amount of comments.
 
-	The minified version may benefit from faster loading. The minifier script is also included. Run it to generate a minified version of the shim library based on the uncompressed version.
+	The minified version may benefit from faster loading because of all the comments and line breaks. The minifier script is also included to generate new minified versions.
+
+	Run the minifier script to generate a minified version of the shim library based on the uncompressed version.
 
 * Testing
 
