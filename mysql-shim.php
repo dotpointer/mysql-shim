@@ -4,8 +4,6 @@
 # purpose: Redefines deprecated or missing mysql_ functions and calls
 # mysqli_ functions for PHP5.5+.
 #
-# website: http://www.dotpointer.tk/
-#
 # author: Robert Klebe, dotpointer, dotpointer at gmail.com
 #
 # licensing: Public domain, edit and share without permission.
