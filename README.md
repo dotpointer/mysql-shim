@@ -240,6 +240,7 @@ PHP MySQL to MySQLi migration shim library
 	* Colin McKinnon - Find and sed replacements, improved is_resource_or_mysqli() and auto_prepend suggestions
 	* Yaff Are - Improved error return values
 	* Tony Russo - Noted mysql_unbuffered_query() missing and reported bug in testing script
+	* zacware (GitHub) - Improved mysql_result() and added mysql_selectdb()
 	* Checkout contributors at GitHub, please send me mail if you would like to contribute
 
 * Contact

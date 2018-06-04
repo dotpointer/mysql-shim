@@ -73,6 +73,9 @@
 # 2017-02-22 20:27:02 - adding mysql_dbname()
 # 2017-02-24 21:00:17 - adjusting to 80 column width, replacing a lot of
 # internal local function calls with mysqli function calls
+# 2018-06-04 18:53:00 - bugfix, mysql_result handled null data incorrectly
+# and was case sensitive, adding mysql_selectdb, changes contributed by
+# zacwire (GitHub)
 #
 # notes
 # -----
@@ -999,10 +1002,15 @@ if (!extension_loaded('mysql')) {
 		if (mysqli_data_seek($result, $row) === false) return false;
 		$row = mysqli_fetch_array($result);
 		if ($row === NULL) return $row;
-		if (!isset($row[$field])) return false;
+		if (!array_key_exists($field, $row)) {
+			$row = array_change_key_case($row, CASE_LOWER);
+			$field = strtolower($field);
+			if (!array_key_exists($field, $row)) {
+				return false;
+			}
+		}
 		return $row[$field];
 	}
-
 
 	# mysql_select_db - Select a MySQL database
 	# bool mysql_select_db ( string $database_name
@@ -1013,6 +1021,11 @@ if (!extension_loaded('mysql')) {
 			mysql_ensure_link($link_identifier),
 			$database_name
 		);
+	}
+
+	# alias for mysql_select_db
+	function mysql_selectdb($database_name, $link_identifier = NULL) {
+		return mysql_select_db ($database_name, $link_identifier = NULL);
 	}
 
 	# mysql_set_charset - Sets the client character set
