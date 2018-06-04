@@ -75,7 +75,8 @@
 # internal local function calls with mysqli function calls
 # 2018-06-04 18:53:00 - bugfix, mysql_result handled null data incorrectly
 # and was case sensitive, adding mysql_selectdb, changes contributed by
-# zacwire (GitHub)
+# zacware (GitHub)
+# 2018-06-04 19:01 - spelling correction
 #
 # notes
 # -----
