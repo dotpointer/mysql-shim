@@ -253,9 +253,9 @@ PHP MySQL to MySQLi migration shim library
 
 		apt-get install git
 
-		git clone https://github.com/dotpointer/mysql-shim.git
+		git clone https://gitlab.com/dotpointer/mysql-shim.git
 
 	Or visit the web page and download the project in a ZIP file:
 
-		https://github.com/dotpointer/mysql-shim
+		https://gitlab.com/dotpointer/mysql-shim
 
