@@ -20,7 +20,7 @@ PHP MySQL to MySQLi migration shim library
 
 * Purpose
 
-	Seamlessly redefines deprecated or missing mysql_ functions and MYSQL_ constants and calls the corresponding mysqli_ functions for PHP5.5+.
+	Seamlessly redefines deprecated or missing mysql_ functions and MYSQL_ constants and calls the corresponding mysqli_ functions for PHP 5.5+ and PHP 7+.
 	Converting PHP MySQL function calls to PHP MySQLi function calls.
 
 * Project goal
@@ -31,7 +31,7 @@ PHP MySQL to MySQLi migration shim library
 
 * Problem
 
-	As of PHP5.5 the original mysql extension for PHP and its provided procedural functions for PHP are marked as deprecated and are removed in PHP 7.0.0.
+	As of PHP 5.5 the original mysql extension for PHP and its provided procedural functions for PHP are marked as deprecated and are removed in PHP 7.0.0.
 
 	Websites and other PHP enabled projects that use these functions (like mysql_connect, mysql_query etc.) may not work properly after this change in PHP. This because the required functions now trigger an E_DEPRECATED error in PHP 5.5 and in PHP 7.0.0 even cause fatal errors as the functions do not exist anymore, breaking the bridge between your code and your database.
 

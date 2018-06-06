@@ -2,7 +2,7 @@
 # PHP MySQL to MySQLi migration shim library
 # ------------------------------------------
 # purpose: Redefines deprecated or missing mysql_ functions and calls
-# mysqli_ functions for PHP5.5+.
+# mysqli_ functions for PHP 5.5+ and PHP 7+.
 #
 # author: Robert Klebe, dotpointer, dotpointer at gmail.com
 #
@@ -76,7 +76,8 @@
 # 2018-06-04 18:53:00 - bugfix, mysql_result handled null data incorrectly
 # and was case sensitive, adding mysql_selectdb, changes contributed by
 # zacware (GitHub)
-# 2018-06-04 19:01 - spelling correction
+# 2018-06-04 19:01:00 - spelling correction
+# 2018-06-06 18:56:00 - documentation update
 #
 # notes
 # -----
