@@ -21,7 +21,7 @@ PHP MySQL to MySQLi migration shim library
 * Purpose
 
 	Seamlessly redefines deprecated or missing mysql_ functions and MYSQL_ constants and calls the corresponding mysqli_ functions for PHP 5.5+ and PHP 7+.
-	Converting PHP MySQL function calls to PHP MySQLi function calls.
+	Converts PHP MySQL function calls to PHP MySQLi function calls.
 
 * Project goal
 
