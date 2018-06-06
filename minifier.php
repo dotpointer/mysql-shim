@@ -19,7 +19,7 @@ $patterns = array(
 	'/\n/Um',					# line feeds
 	'/\r/Um',					# returns
 	'/^\s+|\s+$|\s+(?=\s)/Um',	# whitespace
-	'/(<\?php)/Umi'				/* add space after <?php */
+	'/(<\?php)/Umi',			/* add space after <?php */
 	'/(\?>)/Umi',				/* add space before ?>   */
 	'/\t/Um'					# tabs
 );
