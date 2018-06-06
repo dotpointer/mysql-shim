@@ -1,44 +1,46 @@
 <?php
-# PHP Minify Robert Klebe's MySQLi migration shim library
-# ------------------------------------------
-# purpose: Remove #Comments, Line Feeds, Returns, White Space & Tabs
+# PHP MySQL to MySQLi migration shim library minifier
+# ---------------------------------------------------
 #
-# author: Tony Russo
+# purpose: remove # comments, line feeds, returns, white space and tabs
+# loads 'mysql-shim.php', writes minified code to 'mysql-shim-min.php'
 #
-# licensing: Public domain, edit and share without permission.
+# author/editor: Robert Klebe, dotpointer
+# initial author: Tony Russo
 #
-# Loads 'mysql-shim.php'
-# Writes minified code to 'mysql-shim-min.php'
+# licensing: see LICENSE file
+#
+# changelog
+# 2018-06-06 19:40:00 - reformatting and editing license
 
-#Regular Expressions to minify
+# regular expressions to minify
 $patterns = array(
-	'/^.*#(.*)$/Um',          //#Comments (does not remove /* */ because you don't use them)
-	'/\n/Um',               //LineFeeds
-	'/\r/Um',              //Returns
-	'/^\s+|\s+$|\s+(?=\s)/Um', //WhiteSpace
-	'/(<\?php)/Umi',         /* Add space after <?php */
-	'/(\?>)/Umi',           /* Add space before ?>   */
-	'/\t/Um'               //Tabs
+	'/^.*#(.*)$/Um',			# comments (does not remove /* */ because not used)
+	'/\n/Um',					# line feeds
+	'/\r/Um',					# returns
+	'/^\s+|\s+$|\s+(?=\s)/Um',	# whitespace
+	'/(<\?php)/Umi'				/* add space after <?php */
+	'/(\?>)/Umi',				/* add space before ?>   */
+	'/\t/Um'					# tabs
 );
 
-#Replacements
+# replacements
 $replacements = array(
-	'',         //No Comments
-	'',         //No LineFeeds
-	'',         //No Returns
-	'',         //No WhiteSpace
-	'${1} ',     /* Add space after <?php */
-	' ${1}',     /* Add space before ?>   */
-	''          //No Tabs
+	'',			# no comments
+	'',			# no line feeds
+	'',			# no returns
+	'',			# no whitespace
+	'${1} ',	/* add space after <?php */
+	' ${1}',	/* add space before ?>   */
+	''			# no tabs
 );
 
-#Load source code
+# load source code
 $code = file_get_contents('mysql-shim.php');
 
-#Minify
-$code = preg_replace( $patterns, $replacements, $code );
+# minify
+$code = preg_replace($patterns, $replacements, $code);
 
-#Write Minified code
-file_put_contents( 'mysql-shim.min.php', $code );
-
+# write minified code
+file_put_contents('mysql-shim.min.php', $code);
 ?>

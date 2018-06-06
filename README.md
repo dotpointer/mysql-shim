@@ -77,12 +77,11 @@ PHP MySQL to MySQLi migration shim library
 
 		The library can be edited to monitor and modify database data at a level you could not reach so easily before. For example, you could edit the mysql_query() shim function in the library to write all executed queries to a log file, or neglect all UPDATE, INSERT and DELETE queries or forward them to another server.
 
-		It is open source and the license is public domain.
+		It is open source and the license is MIT license.
 
 	* Bad - pitfalls, problems and things to take in to consideration
 
 		* mysql passes resources but mysqli passes objects, so comparisons done in your source with is_resource() may no longer work. Example:
-
 
 		<?php
 			# mysql
@@ -223,7 +222,13 @@ PHP MySQL to MySQLi migration shim library
 
 * License
 
-	Public domain, edit and share without my permission. Contain comments from PHP.net that may rule under different licenses. I do not take any responsibility and I am not liable for any damage caused through use of the code.
+	See the LICENSE file for the current license.
+
+	The current license is MIT license since 2018-06-06.
+
+	Previous versions before 2018-06-06 was public domain.
+
+	Contain comments from PHP.net that may rule under different licenses. I do not take any responsibility and I am not liable for any damage caused through use of the code.
 
 * Sites and projects in the world using the library
 
@@ -236,12 +241,12 @@ PHP MySQL to MySQLi migration shim library
 * Contributors
 
 	* Robert Klebe, dotpointer - Author of initial version and maintainer
-	* marc17 (GitHub) - Improved mysql_result()
+	* marc17, GitHub - Improved mysql_result()
 	* Colin McKinnon - Find and sed replacements, improved is_resource_or_mysqli() and auto_prepend suggestions
 	* Yaff Are - Improved error return values
 	* Tony Russo - Noted mysql_unbuffered_query() missing and reported bug in testing script
-	* zacware (GitHub) - Improved mysql_result() and added mysql_selectdb()
-	* Checkout contributors at GitHub, please send me mail if you would like to contribute
+	* zacware, GitHub - Improved mysql_result() and added mysql_selectdb()
+	* Checkout contributors at GitLab, please send me mail if you would like to contribute
 
 * Contact
 
@@ -249,7 +254,7 @@ PHP MySQL to MySQLi migration shim library
 
 * Download
 
-	The project can be found on GitHub, download and install git, then clone the project, for example in Debian:
+	The project can be found on GitLab, download and install git, then clone the project, for example in Debian:
 
 		apt-get install git
 

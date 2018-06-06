@@ -4,9 +4,9 @@
 # purpose: Redefines deprecated or missing mysql_ functions and calls
 # mysqli_ functions for PHP 5.5+ and PHP 7+.
 #
-# author: Robert Klebe, dotpointer, dotpointer at gmail.com
+# author: Robert Klebe, dotpointer
 #
-# licensing: Public domain, edit and share without permission.
+# licensing: see LICENSE file
 #
 # changelog
 # ---------
@@ -78,6 +78,7 @@
 # zacware (GitHub)
 # 2018-06-04 19:01:00 - spelling correction
 # 2018-06-06 18:56:00 - documentation update
+# 2018-06-06 19:39:00 - updating license
 #
 # notes
 # -----

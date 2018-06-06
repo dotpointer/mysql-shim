@@ -1,7 +1,11 @@
 <?php
-# test file for mysql shim library
-# by robert klebe, dotpointer
-
+# PHP MySQL to MySQLi migration shim library
+# ------------------------------------------
+#
+# author: Robert Klebe, dotpointer
+#
+# licensing: see LICENSE file
+#
 # changelog
 # 2016-02-24 15:27:05 - first version
 # 2016-12-26 15:08:00 - renaming file from mysql.test.php to
@@ -28,6 +32,7 @@
 # 2017-02-24 12:34:00 - moving up mysql_fetch_assoc, bugfix to arguments and return codes
 # 2017-02-24 17:56:53 - allowing false as error return value for a lot of
 # 2017-03-02 20:57:19 - adding test for minified version
+# 2018-06-06 19:41:00 - reformatting and updating license
 
 # functions
 
