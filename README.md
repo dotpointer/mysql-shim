@@ -250,7 +250,7 @@ PHP MySQL to MySQLi migration shim library
 
 * Contact
 
-  You may send me a mail using: dotpointer-at-gmail.com
+  You may send me a letter using: dotpointer (put an at sign here) gmail (put a dot here) com.
 
 * Download
 
