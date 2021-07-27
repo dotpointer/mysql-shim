@@ -80,6 +80,7 @@
 # 2018-06-06 18:56:00 - documentation update
 # 2018-06-06 19:39:00 - updating license
 # 2018-07-19 19:41:19 - indentation change, tab to 2 spaces
+# 2021-07-27 14:35:00 - mysql_connect, php 8 null check
 #
 # notes
 # -----
@@ -362,12 +363,12 @@ if (!extension_loaded('mysql')) {
   ) {
     global $mysql_links;
 
-    # no newlink but s/u/p matches prev ones-take last link
+    # no new link but s/u/p matches previous ones-take last link
     if (!$new_link) {
       global $mysql_links;
 
-      # are there prev links?
-      if (count($mysql_links)) {
+      # are there previous links?
+      if ($mysql_links && count($mysql_links)) {
 
         # get the last one made
         $last = end($mysql_links);
