@@ -1,0 +1,306 @@
+2021-07-27 16:21:00
+
+  CHANGELOG, minifier.php, mysql-shim.php, mysql-shim.test.php - moving
+  changelog comments to CHANGELOG
+
+2021-07-27 14:35:00
+
+  mysql-shim.php - mysql_connect, php 8 null check
+
+2018-07-19 19:41:19
+
+  mysql-shim.test.php - indentation change, tab to 2 spaces
+
+2018-07-19 19:41:19
+
+  mysql-shim.php - indentation change, tab to 2 spaces
+
+2018-07-19 19:41:19
+
+  minifier.php - indentation change, tab to 2 spaces
+
+2018-06-06 19:41:00
+
+  mysql-shim.test.php - reformatting and updating license
+
+2018-06-06 19:40:00
+
+  minifier.php - reformatting and editing license
+
+2018-06-06 19:39:00
+
+  mysql-shim.php - updating license
+
+2018-06-06 18:56:00
+
+  mysql-shim.php - documentation update
+
+2018-06-04 19:01:00
+
+  mysql-shim.php - spelling correction
+
+2018-06-04 18:53:00
+
+  mysql-shim.php - bugfix, mysql_result handled null data incorrectly and was
+  case sensitive, adding mysql_selectdb, changes contributed byzacware
+  (GitHub)
+
+2017-03-02 20:57:19
+
+  mysql-shim.test.php - adding test for minified version
+
+2017-02-24 21:00:17
+
+  mysql-shim.php - adjusting to 80 column width, replacing a lot of internal
+  local function calls with mysqli function calls
+
+2017-02-24 17:56:53
+
+  mysql-shim.test.php - allowing false as error return value for a lot of
+
+2017-02-24 12:34:00
+
+  mysql-shim.test.php
+
+  moving up mysql_fetch_assoc, bugfix to arguments and return codes
+
+2017-02-24 00:40:12
+
+  mysql-shim.test.php
+
+  making test continue on non-test-critical errors but only report it,
+  adding return codes
+
+2017-02-23 23:54:33
+
+  mysql-shim.test.php - adding deeper test of constants, bugfix to
+  mysql_real_escape_string
+
+2017-02-23 23:34:22
+
+  mysql-shim.test.php - removing getopt, using argv instead, noted by Tony
+  Russo
+
+2017-02-23 22:31:21
+
+  mysql-shim.test.php - adding constants check, editing parameters
+
+2017-02-22 20:43:16
+
+  mysql-shim.test.php - skipping but reporting functions that does not exist
+
+2017-02-22 20:27:02
+
+  mysql-shim.php - adding mysql_dbname()
+
+2017-02-22 00:52:08
+
+  mysql-shim.test.php - Making it possible to test native PHP functions by
+  request from Tony Russo and to exclude the shim from the test. Adding
+  checks for function existence in test and correcting return value
+  validations to native PHP 5.6.3 function return values.
+
+2017-02-22 00:51:18
+
+  mysql-shim.php - adding mysql_createdb(), editing error return values of
+  several functions according to native PHP 5.6.3 error return values
+
+2017-02-21 18:56:20
+
+  mysql-shim.test.php - rewriting error handling
+
+2017-02-20 22:20:08
+
+  mysql-shim.php - bugfixes to mysql_num_rows and mysqli_real_escape_string,
+  cleanup, adding confirmation
+
+2017-02-20 22:19:21
+
+  mysql-shim.test.php - adding tests for mysql_query, mysql_unbuffered_query,
+  mysql_num_rows, mysql_pconnect etc.
+
+2017-02-20 20:10:00
+
+  mysql-shim.test.php - bugfix, invalid connection credentials resulted in
+  error, printing help on connect error, thanks to Tony Russo for finding it
+
+2017-02-20 18:56:00
+
+  mysql-shim.php - adding mysql_unbuffered_query, noted missing and requested
+  by Tony Russo
+
+2017-02-20 18:06:00
+
+  mysql-shim.test.php - bugfix, renaming inclusion of library file
+
+2017-02-01 20:51:00
+
+  mysql-shim.php - domain name edit
+
+2016-12-26 15:08:00
+
+  mysql-shim.test.php - renaming file from mysql.test.php to
+  mysql-shim.test.php
+
+2016-12-26 15:07:00
+
+  mysql-shim.php - renaming library from mysql.php to mysql-shim.php
+
+2016-02-25 18:08:54
+
+  mysql-shim.php - cleanup
+
+2016-02-25 16:08:51
+
+  mysql-shim.php - cleanup
+
+2016-02-24 19:21:21
+
+  mysql-shim.php - bugfix, mysql_num_fields - null when invalid parameters
+
+2016-02-24 18:29:02
+
+  mysql-shim.php - adding mysql_list_processes
+
+2016-02-24 17:47:23
+
+  mysql-shim.php - bugfix, mysql_insert_id - null when invalid parameters
+
+2016-02-24 15:27:05
+
+  mysql-shim.test.php - first version
+
+2016-02-24 15:17:10
+
+  mysql-shim.php - bugfix, mysql_thread_i - null when invalid parameters
+
+2016-02-24 15:13:31
+
+  mysql-shim.php - bugfix, mysql_affected_rows - invalid value when invalid
+  parameters
+
+2016-02-24 04:25:01
+
+  mysql-shim.php - bugfix, mysql_get_server_info - null when invalid
+  parameters
+
+2016-02-24 04:10:19
+
+  mysql-shim.php - bugfix, mysql_get_proto_info - null when invalid parameters
+
+2016-02-24 03:43:55
+
+  mysql-shim.php - bugfix, mysql_get_host_info - null when invalid parameters
+
+2016-02-24 03:40:26
+
+  mysql-shim.php - bugfix, mysql_get_client_info, adding link argument
+
+2016-02-24 02:55:09
+
+  mysql-shim.php - bugfix, mysql_field_type - returned invalid value, adding
+  mysql_field_bittypes_to_types
+
+2016-02-24 02:35:15
+
+  mysql-shim.php - bugfix, mysql_field_seek - null when invalid parameters
+
+2016-02-24 02:17:27
+
+  mysql-shim.php - bugfix, mysql_field_flags returned invalid value, adding
+  mysql_field_bitflags_to_flags
+
+2016-02-24 01:02:44
+
+  mysql-shim.php - bugfix, mysql_fetch_lengths - null when invalid parameters
+
+2016-02-24 00:38:04
+
+  mysql-shim.php - bugfix, mysql_fetch_field - null when invalid parameters
+
+2016-02-24 00:12:41
+
+  mysql-shim.php - bugfix, mysql_db_query - selected database could be
+  bypassed
+
+2016-02-23 23:55:36
+
+  mysql-shim.php - bugfix, mysql_drop_db - quotation forbidden
+
+2016-02-23 23:38:01
+
+  mysql-shim.php - bugfix, mysql_client_encoding - null when no link
+
+2016-02-23 23:34:45
+
+  mysql-shim.php - adding mysql_db_name
+
+2016-02-23 22:59:36
+
+  mysql-shim.php - bugfix, mysql_errno, mysql_error - null when no link
+
+2016-02-23 22:47:44
+
+  mysql-shim.php - bugfix, mysql_info - null when no link
+
+2016-02-23 22:27:38
+
+  mysql-shim.php - bugfix, mysql_ping - null when no link
+
+2016-02-23 22:24:20
+
+  mysql-shim.php - bugfix, mysql_list_tables - quotation forbidden
+
+2016-02-23 22:19:36
+
+  mysql-shim.php - bugfix, mysql_list_dbs - null when no link
+
+2016-02-23 22:19:36
+
+  mysql-shim.php - bugfix, mysql_data_seek - null when invalid row number
+
+2016-02-23 21:58:43
+
+  mysql-shim.php - bugfix, mysql_create_db - quotation forbidden
+
+2016-02-23 21:30:57
+
+  mysql-shim.php - bugfix, mysql_connect halted execution upon invalid
+  credentials
+
+2016-02-20 00:35:36
+
+  mysql-shim.php - checking that function error return values are the same as
+  the original ones as suggested by Yaff Are
+
+2015-03-25 00:06:50
+
+  mysql-shim.php - updated is_mysql_resource() with suggestions from Colin McKinnon
+
+2015-03-24 21:57:45
+
+  mysql-shim.php - updated is_mysql_resource() with suggestions from Colin McKinnon
+
+2014-02-16 xx:xx:xx
+
+  mysql-shim.php - updated mysql_result() contributed by marc17 (GitHub)
+
+2013-11-11 xx:xx:xx
+
+  mysql-shim.php - updated mysql_result() contributed by marc17 (GitHub)
+
+2013-10-24 23:16:41
+
+  mysql-shim.php - bugfix, mysql_connect used invalid error functions
+
+2013-09-26 19:23:00
+
+  mysql-shim.php - adding some more function wrappers
+
+2013-09-25 xx:xx:xx
+
+  mysql-shim.php - updated with is_mysql_resource() and bugfixes
+
+2013-09-24 xx:xx:xx
+
+  mysql-shim.php - first version
