@@ -247,6 +247,7 @@ PHP MySQL to MySQLi migration shim library
   * Tony Russo - Noted mysql_unbuffered_query() missing and reported bug in testing script
   * zacware, GitHub - Improved mysql_result() and added mysql_selectdb()
   * Alex (popov654) - Improved mysql_connect() PHP 8 compatibility
+  * Nate Martin - Improved PHP 8.2.1+ INI settings compatibility
   * Checkout contributors at GitLab, please send me mail if you would like to contribute
 
 * Contact

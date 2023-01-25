@@ -84,9 +84,29 @@ if (!extension_loaded('mysql')) {
   $mysql_links = array();
 
   # our own constants to reach default connection values in INI file
-  define('MYSQL_DEFAULT_HOST', ini_get('mysql.default_host'));
-  define('MYSQL_DEFAULT_USER', ini_get('mysql.default_user'));
-  define('MYSQL_DEFAULT_PASSWORD', ini_get('mysql.default_password'));
+  if (!defined('MYSQL_DEFAULT_HOST')) {
+    if (ini_get('mysqli.default_host') !== false) {
+      define('MYSQL_DEFAULT_HOST', ini_get('mysqli.default_host'));
+    } else {
+      define('MYSQL_DEFAULT_HOST', ini_get('mysql.default_host'));
+    }
+  }
+
+  if (!defined('MYSQL_DEFAULT_USER')) {
+    if (ini_get('mysqli.default_user') !== false) {
+      define('MYSQL_DEFAULT_USER', ini_get('mysqli.default_user'));
+    } else {
+      define('MYSQL_DEFAULT_USER', ini_get('mysql.default_user'));
+    }
+  }
+
+  if (!defined('MYSQL_DEFAULT_PASSWORD')) {
+    if (ini_get('mysqli.default_pw') !== false) {
+      define('MYSQL_DEFAULT_PASSWORD', ini_get('mysqli.default_pw'));
+    } else {
+      define('MYSQL_DEFAULT_PASSWORD', ini_get('mysql.default_password'));
+    }
+  }
 
 # --- MySQL constants (from PHP.net) -------------------------------------------
 
